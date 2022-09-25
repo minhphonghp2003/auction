@@ -1,30 +1,24 @@
 <script setup>
+
 import { useRouter } from 'vue-router'
-import { ref } from 'vue';
+import { onMounted, onUpdated, ref } from 'vue';
+let path = ref("")
 
 const router = useRouter();
-let canvas_active = ref(false)
-let searchbox = ref(null)
 let year = new Date().getFullYear()
-const togglecanvas = () =>{
-    canvas_active.value = !canvas_active.value
+let invokeImp = () =>{
+    import("../js/main.js")
+
 }
 
-const opensearch = () =>{
-searchbox.value.style.display = 'block'
-}
-
-const closesearch = () =>{
-searchbox.value.style.display = ''
-}
 </script>
 
 <template>
-
+ 
 
     <!-- Offcanvas Menu Begin -->
-    <div class="offcanvas-menu-overlay" @click="togglecanvas" :class='{active: canvas_active}'></div>
-    <div class="offcanvas-menu-wrapper"  :class='{active: canvas_active}'>
+    <div class="offcanvas-menu-overlay" ></div>
+    <div class="offcanvas-menu-wrapper" >
         <div class="offcanvas__option">
             <div class="offcanvas__links">
                 <a href="#">Sign in</a>
@@ -90,11 +84,11 @@ searchbox.value.style.display = ''
                 <div class="col-lg-6 col-md-6">
                     <nav class="header__menu mobile-menu">
                         <ul>
-                            <li>
-                                <router-link :to="{ name: 'home' }">Home</router-link>
+                            <li @click="invokeImp">
+                                <router-link :to="{ name: 'home' }" >Home</router-link>
                             </li>
                             <li>
-                                <router-link :to="{ name: 'auction' }">Auction</router-link>
+                                <router-link :to="{ name: 'auction' }" >Auction</router-link>
                             </li>
                             <li>
                                 <router-link :to="{ name: 'blog' }">Blog</router-link>

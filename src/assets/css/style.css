@@ -322,7 +322,7 @@ ol {
 
 .header {
 	background: #ffffff;
-	position: fixed;
+	/* position: fixed; */
 	z-index: 9999;
 	width: 100%;
 }
@@ -987,7 +987,7 @@ ol {
 }
 
 .product__item__pic .label {
-	color: #111111;
+	/* color: #111111; */
 	font-size: 11px;
 	font-weight: 700;
 	letter-spacing: 2px;
