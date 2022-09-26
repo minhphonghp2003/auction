@@ -2,25 +2,11 @@
 <script setup>
 import { ref } from "@vue/reactivity";
 import buffer, { Buffer } from "buffer";
-import { onMounted } from "@vue/runtime-core";
-import axios from "axios";
-let props = defineProps(["page"]);
-let product = ref([]);
-onMounted(async () => {
-  if (props.page == "new") {
-    product.value = (
-      await axios.get("https://ecommerce-r6l7.onrender.com/product/all?page=1")
-    ).data;
-  }
-});
-product.value.forEach((p) => {
-  let base64String = Buffer.from(p.image).toString("base64") 
-  p.image = "data:image/jpg;base64," + base64String
-});
+let props = defineProps(["product"]);
+
 </script>
 
 <template>
-  {{ page }}
   <section class="product spad">
     <div class="container">
       <div class="row product__filter">
