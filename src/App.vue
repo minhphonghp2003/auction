@@ -1,8 +1,10 @@
 <script setup>
 import { useRouter } from "vue-router";
+import {onMounted, onUpdated} from 'vue'
 import("../js/main.js");
 let route = useRouter();
 let year = new Date().getFullYear();
+
 </script>
 
 <template>
@@ -112,7 +114,7 @@ let year = new Date().getFullYear();
     </div>
   </header>
   <!-- Header Section End -->
-  <router-view :key="$route.path" />
+  <router-view  />
   <!-- Search Begin -->
   <div ref="searchbox" class="search-model">
     <div class="h-100 d-flex align-items-center justify-content-center">

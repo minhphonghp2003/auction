@@ -1,7 +1,5 @@
 
 <script setup>
-import { ref } from "@vue/reactivity";
-import buffer, { Buffer } from "buffer";
 let props = defineProps(["product"]);
 
 </script>
