@@ -17,7 +17,7 @@ let props = defineProps(["product"]);
         >
           <div class="product__item">
             <div class="product__item__pic">
-              <img :src="p.image" alt="image" />
+              <img v-bind:src="'data:image/jpeg;base64,'+p.image" />
               <span class="label" :class="{ pending: p.status == 'pending' }">
                 {{ p.status }}
               </span>
