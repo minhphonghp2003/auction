@@ -7,6 +7,7 @@ import { ContentLoader } from "vue-content-loader";
 import MostWatchedView from "./MostWatchedView.vue";
 
 import { Buffer } from "buffer";
+import { onMounted } from "@vue/runtime-core";
 
 let product = ref([]);
 let subproduct = ref([]);
@@ -17,19 +18,31 @@ function compareNumbers(a, b) {
   return a.b_count - b.b_count;
 }
 
-axios
-  .get("https://ecommerce-r6l7.onrender.com/product/all")
-  .then((data) => (product.value = data.data))
-  .then((data) => {
-    product.value.forEach((element) => {
-      element.image = Buffer.from(element.image).toString("base64");
-    });
-  })
-  .then(
-    (data) => (subproduct.value = JSON.parse(JSON.stringify(product.value)))
-  );
+onMounted(async () =>{
+  let product.value = (await  axios.get("https://ecommerce-r6l7.onrender.com/product/all")).data
+})
+
+// axios
+//   .get("https://ecommerce-r6l7.onrender.com/product/all")
+//   .then((data) => (product.value = data.data))
+//   .then((data) => {
+//     product.value.forEach((element) => {
+//       element.image = Buffer.from(element.image).toString("base64");
+//     });
+//   })
+//   .then(
+
+//     (data) => (subproduct.value = JSON.parse(JSON.stringify(product.value)))
+//   )
+//   .then(
+//     data =>renderMost()
+//   )
+//   .then(
+//     data => renderNew()
+//   )
 
 let renderMost = () => {
+  product.value = JSON.parse(JSON.stringify(subproduct.value));
   product.value.sort(compareNumbers).reverse();
   product.value = product.value.splice(0, product.value.length / 2);
 
@@ -37,6 +50,7 @@ let renderMost = () => {
   mostWatched.value = product.value[0]
 };
 let renderNew = () => {
+
   product.value = JSON.parse(JSON.stringify(subproduct.value));
   section.value = "new";
 };

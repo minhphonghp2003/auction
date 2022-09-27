@@ -9,7 +9,7 @@ defineProps(['b_count','name','category','date_end','image'])
             <div class="row">
                 <div class="col-lg-3">
                     <div class="categories__text">
-                        <h2>Hot <br /> <span>{{cate}}</span> <br /></h2>
+                        <h2>Hot <br /> <span>{{category}}</span> <br /></h2>
                     </div>
                 </div>
                 <div class="col-lg-4">
