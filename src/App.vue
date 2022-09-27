@@ -1,10 +1,9 @@
 <script setup>
 import { useRouter } from "vue-router";
-import {onMounted, onUpdated} from 'vue'
+import { onMounted, onUpdated } from "vue";
 import("../js/main.js");
 let route = useRouter();
 let year = new Date().getFullYear();
-
 </script>
 
 <template>
@@ -20,8 +19,7 @@ let year = new Date().getFullYear();
         <span>Usd <i class="arrow_carrot-down"></i></span>
         <ul>
           <li>USD</li>
-          <li>EUR</li>
-          <li>USD</li>
+          <li>VND</li>
         </ul>
       </div>
     </div>
@@ -74,9 +72,9 @@ let year = new Date().getFullYear();
       <div class="row">
         <div class="col-lg-3 col-md-3">
           <div class="header__logo">
-            <a href="./index.html"
-              ><img src="/src/assets/img/logo.png" alt=""
-            /></a>
+            <router-link :to="{ name: 'home' }"
+              ><img src="/src/assets/img/icon/Bidthu -1.png" alt=""
+            /></router-link>
           </div>
         </div>
         <div class="col-lg-6 col-md-6">
@@ -114,7 +112,7 @@ let year = new Date().getFullYear();
     </div>
   </header>
   <!-- Header Section End -->
-  <router-view  />
+  <router-view />
   <!-- Search Begin -->
   <div ref="searchbox" class="search-model">
     <div class="h-100 d-flex align-items-center justify-content-center">
@@ -133,7 +131,7 @@ let year = new Date().getFullYear();
           <div class="footer__about">
             <div class="footer__logo">
               <a href="#"
-                ><img src="/src/assets/img/footer-logo.png" alt=""
+                ><img src="/src/assets/img/icon/Bidthu -1.png" alt=""
               /></a>
             </div>
             <p>

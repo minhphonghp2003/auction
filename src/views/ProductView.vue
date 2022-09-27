@@ -29,20 +29,11 @@ let props = defineProps(["product"]);
             </div>
             <div class="product__item__text">
               <h6>{{ p.name }}</h6>
-              <a href="#" class="add-cart"> Start Bidding</a>
+              <a v-if="p.status == 'active'" href="#" class="add-cart"> Start Bidding</a>
+              <a v-else class="add-cart">Not opened yet</a>
               <div class="rating">Sku: {{ p.sku }}</div>
               <h5>{{ p.date_end }}</h5>
-              <div class="product__color__select">
-                <label for="pc-1">
-                  <input type="radio" id="pc-1" />
-                </label>
-                <label class="active black" for="pc-2">
-                  <input type="radio" id="pc-2" />
-                </label>
-                <label class="grey" for="pc-3">
-                  <input type="radio" id="pc-3" />
-                </label>
-              </div>
+              
             </div>
           </div>
         </div>
