@@ -98,13 +98,10 @@ setInterval(()=>{
     <rect x="28" y="16" rx="0" ry="0" width="96" height="86" /> 
     <rect x="168" y="15" rx="0" ry="0" width="96" height="86" /> 
     <rect x="309" y="17" rx="0" ry="0" width="96" height="86" /> 
-    <!-- <rect x="27" y="107" rx="0" ry="0" width="376" height="17" />  -->
     <rect x="26" y="108" rx="0" ry="0" width="387" height="10" /> 
-    <!-- <rect x="28" y="119" rx="0" ry="0" width="384" height="8" /> -->
       </content-loader>
     </div>
   </div>
-  <!-- <HeroView></HeroView> -->
   <ProductView :key="product" :product="product"></ProductView>
   <MostWatchedView  v-if="done()" v-bind="mostWatched"></MostWatchedView>
 </template>

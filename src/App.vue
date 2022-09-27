@@ -47,13 +47,13 @@ let year = new Date().getFullYear();
         <div class="row">
           <div class="col-lg-6 col-md-7">
             <div class="header__top__left">
-              <p>Free shipping, 30-day return or refund guarantee.</p>
+              <p>Trusted bidding system, specially drug.</p>
             </div>
           </div>
           <div class="col-lg-6 col-md-5">
             <div class="header__top__right">
               <div class="header__top__links">
-                <router-link :to="{ name: 'login' }">Sign in</router-link>
+                <router-link :to="{ name: 'auth' }">Sign in</router-link>
                 <router-link :to="{ name: 'faq' }">FAQ</router-link>
               </div>
               <div class="header__top__hover">
