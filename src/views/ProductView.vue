@@ -30,7 +30,7 @@ let props = defineProps(["product"]);
             <div class="product__item__text">
               <h6>{{ p.name }}</h6>
               <a v-if="p.status == 'active'" href="#" class="add-cart"> Start Bidding</a>
-              <a v-else class="add-cart">Not opened yet</a>
+              <a v-else class="add-cart">Session not started yet</a>
               <div class="rating">Sku: {{ p.sku }}</div>
               <h5>{{ p.date_end }}</h5>
               

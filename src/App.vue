@@ -190,7 +190,7 @@ let year = new Date().getFullYear();
               {{ year }}
               All rights reserved | This template is made with
               <i class="fa fa-heart-o" aria-hidden="true"></i> by
-              <a href="https://colorlib.com" target="_blank">Colorlib</a>
+              <a href="https://www.facebook.com/profile.php?id=100068404994823" target="_blank">Nguyen Minh</a>
             </p>
             <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
           </div>

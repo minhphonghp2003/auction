@@ -30,21 +30,23 @@ onMounted(async () => {
   renderMost();
   renderNew();
   countDown(mostWatched.value.date_end)
+  product.value = product.value.splice(0,9)
 });
 
 let renderMost = () => {
   product.value = JSON.parse(JSON.stringify(subproduct.value));
   product.value.sort(compareNumbers).reverse();
   product.value = product.value.splice(0, product.value.length / 2);
-
   section.value = "most";
   mostWatched.value = product.value[0];
   let dateEnd = mostWatched.value.date_end.split("-");
   mostWatched.value.date_end = new Date(dateEnd[0], dateEnd[1] - 1, dateEnd[2]);
+  product.value.shift()
 };
 
 let renderNew = () => {
   product.value = JSON.parse(JSON.stringify(subproduct.value));
+  product.value = product.value.splice(0,9)
   section.value = "new";
 };
 let done = () => {
@@ -88,16 +90,17 @@ setInterval(()=>{
       </ul>
       <content-loader
         v-if="!done()"
-        viewBox="0 0 400 150"
-        :speed="2"
-        primaryColor="#f3f3f3"
-        secondaryColor="#ecebeb"
-      >
-        <circle cx="10" cy="20" r="8" />
-        <circle cx="10" cy="50" r="8" />
-        <circle cx="10" cy="80" r="8" />
-        <circle cx="10" cy="110" r="8" />
-        <rect x="34" y="13" rx="0" ry="0" width="504" height="103" />
+        viewBox="0 0 476 124"
+    :speed="2"
+    primaryColor="#f3f3f3"
+    secondaryColor="#ecebeb"
+  >
+    <rect x="28" y="16" rx="0" ry="0" width="96" height="86" /> 
+    <rect x="168" y="15" rx="0" ry="0" width="96" height="86" /> 
+    <rect x="309" y="17" rx="0" ry="0" width="96" height="86" /> 
+    <!-- <rect x="27" y="107" rx="0" ry="0" width="376" height="17" />  -->
+    <rect x="26" y="108" rx="0" ry="0" width="387" height="10" /> 
+    <!-- <rect x="28" y="119" rx="0" ry="0" width="384" height="8" /> -->
       </content-loader>
     </div>
   </div>
