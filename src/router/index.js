@@ -11,6 +11,7 @@ import LoginView from '../views/authentication/LoginView.vue'
 import RegisterView from '../views/authentication/RegisterView.vue'
 import ChangePassword from '../views/authentication/ChangePassword.vue'
 import ResetPasswordView from '../views/authentication/ResetPasswordView.vue'
+import MyProfileView from '../views/user/MyProfileView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -19,6 +20,12 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView,
+     
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: MyProfileView,
      
     },
     {
