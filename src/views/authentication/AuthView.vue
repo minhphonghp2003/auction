@@ -1,131 +1,30 @@
 
 <script setup>
-import axios from 'axios';
-import { ref } from 'vue';
-import RegisterView from './RegisterView.vue'
-import { useCookies } from 'vue3-cookies'
+import { ref } from "vue";
+import { useRouter } from "vue-router";
 
-const {cookies} = useCookies()
-let loginComp = ref(true)
-let swapComp = () =>{
-  loginComp.value = !loginComp.value
-}
-let username = ref('')
-let password = ref('')
-let isUsername = ref(true)
-let isPassword = ref(true)
-let nouser = ref(false)
-let submit = ref(true)
-let checkNoInput = () =>{
-  if(!username.value){
-    isUsername.value = false
-    return true
-  }
-  if(!password.value){
-    isPassword.value = false
-    return true
-  }
-}
-
-let login = async() =>{
-  submit.value = false
-  if(checkNoInput()){
-
-    return
-  }
-  let credential = {username:username.value, password:password.value}
-  try {
-    let res = (await axios.post("https://ecommerce-r6l7.onrender.com/user/login",credential)).data
-    cookies.set('token', res.token)
-    submit.value = true
-  } catch (error) {
-    submit.value = true
-   nouser.value = true
-  }
-
-}
+const router = useRouter();
 
 </script>
 
 <template>
-  <RegisterView v-if="!loginComp"></RegisterView>
   <div v-if="loginComp" class="limiter">
     <div
       class="container-login100"
       style="background-image: url('/src/assets/auth/images/bg-01.jpg')"
     >
-      <div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-54" style="margin:150px">
-          <span class="login100-form-title p-b-49"> Login </span>
-          <p style="color:red" v-if="nouser">No valid user</p>
-          <div
-          
-      
-            class="wrap-input100 validate-input m-b-23"
-          >
-            <span class="label-input100">Username</span>
-            <input
-              class="input100"
-              type="text"
-            name="username"
-              placeholder="Type your username"
-              v-model="username"
-            />
-            <span class="focus-input100" data-symbol="&#xf206;"></span>
-          </div>
-          <p  v-if="!isUsername" style="color:red">Username is require</p>
-          <div
-       
-            class="wrap-input100 validate-input"
-          >
-            <span class="label-input100">Password</span>
-            <input
-              class="input100"
-              type="password"
-          
-            name="password"
-              placeholder="Type your password"
-              v-model="password"
-            />
-            <span class="focus-input100" data-symbol="&#xf190;"></span>
-          </div>
-
-          <p  v-if="!isPassword" style="color:red">Password is require</p>
-          <div class="text-right p-t-8 p-b-31">
-            <a href="#"> Forgot password? </a>
-          </div>
-
-          <div class="container-login100-form-btn">
-            <div class="wrap-login100-form-btn">
-              <div class="login100-form-bgbtn"></div>
-              <!-- <button>login</button> -->
-              <button v-if="submit" class="login100-form-btn" @click="login">Login</button>
-            </div>
-          </div>
-          
-
-          <div class="txt1 text-center p-t-54 p-b-20">
-            <span> Or Sign Up Using </span>
-          </div>
-
-          <div class="flex-c-m">
-            <a href="#" class="login100-social-item bg1">
-              <i class="fa fa-facebook"></i>
-            </a>
-
-            <a href="#" class="login100-social-item bg2">
-              <i class="fa fa-twitter"></i>
-            </a>
-
-            <a href="#" class="login100-social-item bg3">
-              <i class="fa fa-google"></i>
-            </a>
-          </div>
-
-          <div class="flex-col-c p-t-155">
-            <span class="txt1 p-b-17"> Or Sign Up Using </span>
-
-            <a href="#" @click="swapComp" class="txt2"> Sign Up </a>
-          </div>
+      <div
+        class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-54"
+        style="margin: 150px"
+      >
+        <span v-if="comp == login" class="login100-form-title p-b-49">
+          Login
+        </span>
+        <span v-if="comp == register" class="login100-form-title p-b-49">
+          Register
+        </span>
+        <slot></slot>
+        
       </div>
     </div>
   </div>

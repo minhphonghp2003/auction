@@ -1,10 +1,34 @@
 <script setup>
+import axios from "axios";
+import { onMounted, onUpdated, ref } from "vue";
+import { getCurrentInstance } from "vue";
 import { useRouter } from "vue-router";
+import { useCookies } from "vue3-cookies";
 import("../js/main.js");
 
 let year = new Date().getFullYear();
 
+const router = useRouter();
+const { cookies } = useCookies();
+let token = ref(cookies.get("token"));
+let fullname = ref("");
 
+onMounted(async () => {
+  if (token.value) {
+    fullname.value = (
+      await axios.get("https://ecommerce-r6l7.onrender.com/user/mydata", {
+        headers: {
+          token: token.value,
+        },
+      })
+    ).data.user.fullname;
+  }
+});
+
+let logout = () => {
+  cookies.remove("token");
+  router.push({ name: "home" }).then(() => router.go());
+};
 </script>
 
 <template>
@@ -54,7 +78,19 @@ let year = new Date().getFullYear();
           <div class="col-lg-6 col-md-5">
             <div class="header__top__right">
               <div class="header__top__links">
-                <router-link :to="{ name: 'auth' }">Sign in</router-link>
+                <router-link
+                  :key="fullname"
+                  v-if="!fullname"
+                  :to="{ name: 'login' }"
+                  >Sign in</router-link
+                >
+                <router-link
+                  @click="logout"
+                  :key="fullname"
+                  v-if="fullname"
+                  :to="{ name: 'home' }"
+                  >{{ fullname }}</router-link
+                >
                 <router-link :to="{ name: 'faq' }">FAQ</router-link>
               </div>
               <div class="header__top__hover">
@@ -191,7 +227,11 @@ let year = new Date().getFullYear();
               {{ year }}
               All rights reserved | This template is made with
               <i class="fa fa-heart-o" aria-hidden="true"></i> by
-              <a href="https://www.facebook.com/profile.php?id=100068404994823" target="_blank">Nguyen Minh</a>
+              <a
+                href="https://www.facebook.com/profile.php?id=100068404994823"
+                target="_blank"
+                >Nguyen Minh</a
+              >
             </p>
             <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
           </div>

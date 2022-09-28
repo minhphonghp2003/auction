@@ -7,7 +7,8 @@ import BlogDetailView from '../views/BlogDetailView.vue'
 import ContactView from '../views/ContactView.vue'
 import ShoppingCartView from '../views/ShoppingCartView.vue'
 import FaqView from '../views/FaqView.vue'
-import AuthView from '../views/authentication/AuthView.vue'
+import LoginView from '../views/authentication/LoginView.vue'
+import RegisterView from '../views/authentication/RegisterView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -19,9 +20,15 @@ const router = createRouter({
      
     },
     {
-      path: '/auth',
-      name: 'auth',
-      component: AuthView,
+      path: '/login',
+      name: 'login',
+      component: LoginView,
+     
+    },
+    {
+      path: '/register',
+      name: 'register',
+      component: RegisterView,
      
     },
     {

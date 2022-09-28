@@ -1,7 +1,88 @@
 
 <script setup>
 import { ref } from "@vue/reactivity";
-  
+import { onUpdated } from "@vue/runtime-core";
+import { useRouter } from "vue-router";
+const router = useRouter();
+let submit = ref(true);
+let username = ref("");
+let fullname = ref("");
+let phone = ref("");
+let email = ref("");
+let password = ref("");
+let usernameinp = ref(null);
+let fullnameinp = ref(null);
+let phoneinp = ref(null);
+let emailinp = ref(null);
+let passwordinp = ref(null);
+
+let checkNoInput = () => {
+  usernameinp.value.style["border-bottom"] = "2px solid #d9d9d9";
+  fullnameinp.value.style["border-bottom"] = "2px solid #d9d9d9";
+  phoneinp.value.style["border-bottom"] = "2px solid #d9d9d9";
+  emailinp.value.style["border-bottom"] = "2px solid #d9d9d9";
+  passwordinp.value.style["border-bottom"] = "2px solid #d9d9d9";
+  if (!username.value) {
+    usernameinp.value.style["border-bottom"] = "2px solid red";
+    submit.value = true;
+    return true;
+  }
+  if (!fullname.value) {
+    fullnameinp.value.style["border-bottom"] = "2px solid red";
+    submit.value = true;
+    return true;
+  }
+  if (!phone.value) {
+    phoneinp.value.style["border-bottom"] = "2px solid red";
+    submit.value = true;
+    return true;
+  }
+  if (!email.value) {
+    emailinp.value.style["border-bottom"] = "2px solid red";
+    submit.value = true;
+    return true;
+  }
+  if (!password.value) {
+    passwordinp.value.style["border-bottom"] = "2px solid red";
+    submit.value = true;
+    return true;
+  }
+
+  return false;
+};
+
+let register = async () => {
+  if (checkNoInput()) {
+    return;
+  }
+  submit.value = false;
+  let credential = {
+    username: username.value,
+    fullname: fullname.value,
+    phone: phone.value,
+    email: email.value,
+    pasword: password.value,
+  };
+  try {
+    let res = (
+      await axios.post(
+        "https://ecommerce-r6l7.onrender.com/user/register",
+        credential
+      )
+    ).data;
+    console.log(res.data);
+    cookies.set("token", res.token);
+    submit.value = true;
+    router.push({ name: "home" }).then(() => router.go());
+  } catch (error) {
+    console.log(error);
+    submit.value = true;
+  }
+};
+
+let swapComp = () => {
+  router.push({ name: "login" });
+};
 </script>
 
 <template>
@@ -10,74 +91,106 @@ import { ref } from "@vue/reactivity";
       class="container-login100"
       style="background-image: url('/src/assets/auth/images/bg-01.jpg')"
     >
-      <div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-54" style="margin:150px">
-        <form class="login100-form validate-form">
-          <span class="login100-form-title p-b-49"> Register </span>
+      <div
+        class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-54"
+        style="margin: 150px"
+      >
+        <span class="login100-form-title p-b-49"> Register </span>
 
-          <div
-            class="wrap-input100 validate-input m-b-23"
-            data-validate="Username is reauired"
-          >
-            <span class="label-input100">Username</span>
-            <input
-              class="input100"
-              type="text"
-              name="username"
-              placeholder="Type your username"
-              v-model="username"
-            />
-            <span class="focus-input100" data-symbol="&#xf206;"></span>
+        <div
+          class="wrap-input100 validate-input m-b-23"
+          ref="usernameinp"
+          data-validate="Username is reauired"
+        >
+          <span class="label-input100">Username</span>
+          <input
+            class="input100"
+            type="text"
+            name="username"
+            placeholder="Type your username"
+            v-model="username"
+          />
+
+          <span class="focus-input100" data-symbol="&#xf206;"></span>
+        </div>
+        <div
+          ref="fullnameinp"
+          class="wrap-input100 validate-input m-b-23"
+          data-validate="Username is reauired"
+        >
+          <span class="label-input100">Fullname</span>
+          <input
+            class="input100"
+            type="text"
+            name="fullname"
+            placeholder="Type your fullname"
+            v-model="fullname"
+          />
+          <span class="focus-input100" data-symbol="&#xf206;"></span>
+        </div>
+        <div
+          ref="phoneinp"
+          class="wrap-input100 validate-input m-b-23"
+          data-validate="Username is reauired"
+        >
+          <span class="label-input100">Phone</span>
+          <input
+            style="-moz-appearance: textfield"
+            class="input100"
+            type="number"
+            name="phone"
+            placeholder="Type your phone"
+            v-model="phone"
+          />
+          <span class="focus-input100" data-symbol="&#x260F;"></span>
+        </div>
+        <div
+          ref="emailinp"
+          class="wrap-input100 validate-input m-b-23"
+          data-validate="Username is reauired"
+        >
+          <span class="label-input100">Email</span>
+          <input
+            class="input100"
+            type="email"
+            name="email"
+            placeholder="Type your email"
+            v-model="email"
+          />
+          <span class="focus-input100" data-symbol="&#x2709;"></span>
+        </div>
+        <div
+          ref="passwordinp"
+          class="wrap-input100 validate-input"
+          data-validate="Password is required"
+        >
+          <span class="label-input100">Password</span>
+          <input
+            class="input100"
+            type="password"
+            name="pass"
+            placeholder="Type your password"
+            v-model="password"
+          />
+          <span class="focus-input100" data-symbol="&#xf190;"></span>
+        </div>
+
+        <div class="text-right p-t-8 p-b-31"></div>
+
+        <div class="container-login100-form-btn">
+          <div class="wrap-login100-form-btn">
+            <div class="login100-form-bgbtn"></div>
+            <button v-if="submit" @click="register" class="login100-form-btn">
+              Sign up
+            </button>
           </div>
+        </div>
 
-          <div
-            class="wrap-input100 validate-input"
-            data-validate="Password is required"
-          >
-            <span class="label-input100">Password</span>
-            <input
-              class="input100"
-              type="password"
-              name="pass"
-              placeholder="Type your password"
-            />
-            <span class="focus-input100" data-symbol="&#xf190;"></span>
-          </div>
+        <div class="flex-col-c p-t-155">
+          <span class="txt1 p-b-17"> Already have an account? </span>
 
-          <div class="text-right p-t-8 p-b-31">
-            <a href="#"> Forgot password? </a>
-          </div>
-
-          <div class="container-login100-form-btn">
-            <div class="wrap-login100-form-btn">
-              <div class="login100-form-bgbtn"></div>
-              <button class="login100-form-btn">Login</button>
-            </div>
-          </div>
-
-          <div class="txt1 text-center p-t-54 p-b-20">
-            <span> Or Sign Up Using </span>
-          </div>
-
-          <div class="flex-c-m">
-            <a href="#" class="login100-social-item bg1">
-              <i class="fa fa-facebook"></i>
-            </a>
-
-            <a href="#" class="login100-social-item bg2">
-              <i class="fa fa-twitter"></i>
-            </a>
-
-            <a href="#" class="login100-social-item bg3">
-              <i class="fa fa-google"></i>
-            </a>
-          </div>
-
-          <div class="flex-col-c p-t-155">
-            <span class="txt1 p-b-17"> Or Sign Up Using </span>
-
-            <a href="#" class="txt2"> Sign Up </a>
-          </div>
-        </form>
+          <a href="#" @click="swapComp" class="txt2"> Sign In </a>
+        </div>
       </div>
     </div>
   </div>
