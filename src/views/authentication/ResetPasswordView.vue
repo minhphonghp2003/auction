@@ -1,71 +1,92 @@
 
 <script setup>
-import { ref } from 'vue';
-import {useRouter} from 'vue-router'
-import emailjs from 'emailjs-com'
+import axios from "axios";
+import { ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
-const router = useRouter()
-let email = ref("")
-let submit = ref(true)
-let isEmail = ref(true)
-let swapComp = () =>{
-    router.push({name:'login'})
-}
+const router = useRouter();
+const route = useRoute()
+let error = ref("");
+let submit = ref(true);
+let password = ref("");
+let confirmpassword = ref("");
 
-let checkNoInput = () =>{
-  if(!email.value){
-    isEmail.value = false
-    return true
+let checkNoInput = () => {
+  if (
+    password.value < 8 ||
+    confirmpassword.value < 8 ||
+    password.value !== confirmpassword.value
+  ) {
+    error.value = "Please check your password and confirm your password again";
+    return true;
   }
-  
-}
+  return false;
+};
 
+let reset = async () => {
+  if (checkNoInput()) {
+    return;
+  }
+  try {
+    submit.value = false
+    let email =(await axios.get("https://ecommerce-r6l7.onrender.com/user/email",{ params: { id:route.params.e_id } })).data.email
+    await axios.put("https://ecommerce-r6l7.onrender.com/user/newpassword",{
+      email:email,
+      password:password.value
+    })
 
-
-
+    router.push({name:'login'})
+  } catch (error) {
+    submit.value = true
+   error.value = "Sorry, we can't handle this right now! Please try another time"
+  }
+};
 </script>
 
 <template>
-  <div  class="limiter">
+  <div class="limiter">
     <div
       class="container-login100"
       style="background-image: url('/src/assets/auth/images/bg-01.jpg')"
     >
-      <div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-54" style="margin:150px">
-          <span class="login100-form-title p-b-49"> Reset password  </span>
-          <div
-            class="wrap-input100 validate-input m-b-23"
-          >
-            <span class="label-input100">Email</span>
-            <input
-              class="input100"
-              type="email"
-            name="email"
-              placeholder="Type your email"
-              v-model="email"
-            />
-            <span class="focus-input100" data-symbol="&#x2709;"></span>
+      <div
+        class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-54"
+        style="margin: 150px"
+      >
+        <span class="login100-form-title p-b-49"> Reset password </span>
+        <div class="wrap-input100 validate-input m-b-23">
+          <span class="label-input100">New password</span>
+          <input
+            class="input100"
+            type="password"
+            name="password"
+            placeholder="Type your new password"
+            v-model="password"
+          />
+          <span class="focus-input100" data-symbol="&#xf190;"></span>
+        </div>
+        <div class="wrap-input100 validate-input m-b-23">
+          <span class="label-input100">Confirm new password</span>
+          <input
+            class="input100"
+            type="password"
+            name="password"
+            placeholder="Confirm your password"
+            v-model="confirmpassword"
+          />
+          <span class="focus-input100" data-symbol="&#xf190;"></span>
+        </div>
+
+        <p v-if="error" style="color: red">{{ error }}</p>
+
+        <div class="container-login100-form-btn">
+          <div class="wrap-login100-form-btn">
+            <div class="login100-form-bgbtn"></div>
+            <button v-if="submit" class="login100-form-btn" @click="reset">
+              Reset
+            </button>
           </div>
-          
-
-          <p  v-if="!isEmail" style="color:red">Email is require</p>
-          
-
-          <div class="container-login100-form-btn">
-            <div class="wrap-login100-form-btn">
-              <div class="login100-form-bgbtn"></div>
-              <button v-if="submit" class="login100-form-btn" @click="send">Send</button>
-            </div>
-            <h2 v-if="!submit">Your email has been sent</h2>
-          </div>
-          
-
-          
-
-          <div class="flex-col-c p-t-155">
-
-            <a href="#" @click="swapComp" class="txt2"> Sign in </a>
-          </div>
+        </div>
       </div>
     </div>
   </div>

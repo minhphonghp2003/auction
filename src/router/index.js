@@ -40,7 +40,7 @@ const router = createRouter({
      
     },
     {
-      path: '/resetpassword',
+      path: '/resetpassword/:e_id',
       name: 'resetpasswd',
       component: ResetPasswordView,
      
