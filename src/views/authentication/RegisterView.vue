@@ -2,7 +2,11 @@
 <script setup>
 import { ref } from "@vue/reactivity";
 import { onUpdated } from "@vue/runtime-core";
+import axios from 'axios'
 import { useRouter } from "vue-router";
+import { useCookies } from 'vue3-cookies'
+
+const {cookies} = useCookies()
 const router = useRouter();
 let submit = ref(true);
 let username = ref("");
@@ -15,6 +19,7 @@ let fullnameinp = ref(null);
 let phoneinp = ref(null);
 let emailinp = ref(null);
 let passwordinp = ref(null);
+let errorWarn  = ref('')
 
 let checkNoInput = () => {
   usernameinp.value.style["border-bottom"] = "2px solid #d9d9d9";
@@ -42,8 +47,9 @@ let checkNoInput = () => {
     submit.value = true;
     return true;
   }
-  if (!password.value) {
+  if (password.value.length <=8) {
     passwordinp.value.style["border-bottom"] = "2px solid red";
+    errorWarn.value = "Password's length must be more than 8"
     submit.value = true;
     return true;
   }
@@ -58,10 +64,10 @@ let register = async () => {
   submit.value = false;
   let credential = {
     username: username.value,
+    password: password.value,
     fullname: fullname.value,
     phone: phone.value,
     email: email.value,
-    pasword: password.value,
   };
   try {
     let res = (
@@ -75,7 +81,7 @@ let register = async () => {
     submit.value = true;
     router.push({ name: "home" }).then(() => router.go());
   } catch (error) {
-    console.log(error);
+    errorWarn.value = "User already exists"
     submit.value = true;
   }
 };
@@ -96,7 +102,7 @@ let swapComp = () => {
         style="margin: 150px"
       >
         <span class="login100-form-title p-b-49"> Register </span>
-
+        <p style="color:red" v-if="errorWarn"> {{errorWarn}}</p>
         <div
           class="wrap-input100 validate-input m-b-23"
           ref="usernameinp"

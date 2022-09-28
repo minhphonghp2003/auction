@@ -20,21 +20,8 @@ let checkNoInput = () =>{
   
 }
 
-let send = () =>{
-    if(checkNoInput()){
-        return
-    }
-let message = "We are from Bidthu? and we received a password-reset request from your email. Please follow this link to reset your password\nhttp://localhost:5173/resetpassword"
-let emailTemplate = {
-    from_name:"Minh",
-    to_name:"User",
-    message:message,
-    to_email:email.value,
-    reply_to:"minhphonghp2003@gmail.com"
-}
-emailjs.send("service_ftiggz8","template_f0g3465",emailTemplate,"uFlpriBhFEE_5Ct8N")
-submit.value = false
-}
+
+
 
 </script>
 
@@ -45,7 +32,7 @@ submit.value = false
       style="background-image: url('/src/assets/auth/images/bg-01.jpg')"
     >
       <div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-54" style="margin:150px">
-          <span class="login100-form-title p-b-49"> Send password reset to my email  </span>
+          <span class="login100-form-title p-b-49"> Reset password  </span>
           <div
             class="wrap-input100 validate-input m-b-23"
           >

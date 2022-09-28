@@ -9,6 +9,8 @@ import ShoppingCartView from '../views/ShoppingCartView.vue'
 import FaqView from '../views/FaqView.vue'
 import LoginView from '../views/authentication/LoginView.vue'
 import RegisterView from '../views/authentication/RegisterView.vue'
+import ChangePassword from '../views/authentication/ChangePassword.vue'
+import ResetPasswordView from '../views/authentication/ResetPasswordView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -29,6 +31,18 @@ const router = createRouter({
       path: '/register',
       name: 'register',
       component: RegisterView,
+     
+    },
+    {
+      path: '/forgotpassword',
+      name: 'forgotpasswd',
+      component: ChangePassword,
+     
+    },
+    {
+      path: '/resetpassword',
+      name: 'resetpasswd',
+      component: ResetPasswordView,
      
     },
     {

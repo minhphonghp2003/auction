@@ -18,6 +18,7 @@ let isUsername = ref(true)
 let isPassword = ref(true)
 let nouser = ref(false)
 let submit = ref(true)
+
 let checkNoInput = () =>{
   if(!username.value){
     isUsername.value = false
@@ -48,10 +49,13 @@ let login = async() =>{
 
 }
 
+let forgotpasswd = () =>{
+  router.push({name:'forgotpasswd'})
+}
+
 </script>
 
 <template>
-  <RegisterView v-if="!loginComp"></RegisterView>
   <div v-if="loginComp" class="limiter">
     <div
       class="container-login100"
@@ -94,7 +98,7 @@ let login = async() =>{
 
           <p  v-if="!isPassword" style="color:red">Password is require</p>
           <div class="text-right p-t-8 p-b-31">
-            <a href="#"> Forgot password? </a>
+            <a href="#" @click="forgotpasswd"> Forgot password? </a>
           </div>
 
           <div class="container-login100-form-btn">
