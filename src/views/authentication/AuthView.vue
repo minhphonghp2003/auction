@@ -3,7 +3,9 @@
 import axios from 'axios';
 import { ref } from 'vue';
 import RegisterView from './RegisterView.vue'
+import { useCookies } from 'vue3-cookies'
 
+const {cookies} = useCookies()
 let loginComp = ref(true)
 let swapComp = () =>{
   loginComp.value = !loginComp.value
@@ -12,29 +14,33 @@ let username = ref('')
 let password = ref('')
 let isUsername = ref(true)
 let isPassword = ref(true)
-
+let nouser = ref(false)
+let submit = ref(true)
 let checkNoInput = () =>{
   if(!username.value){
-    isUsername.value = !isUsername.value
+    isUsername.value = false
     return true
   }
   if(!password.value){
-    isPassword.value = !isPassword.value
+    isPassword.value = false
     return true
   }
 }
 
 let login = async() =>{
+  submit.value = false
   if(checkNoInput()){
+
     return
   }
   let credential = {username:username.value, password:password.value}
   try {
-    let res = await axios.post("https://ecommerce-r6l7.onrender.com/user/login",credential)
-    console.log(res.data);
-    
+    let res = (await axios.post("https://ecommerce-r6l7.onrender.com/user/login",credential)).data
+    cookies.set('token', res.token)
+    submit.value = true
   } catch (error) {
-   console.log(error); 
+    submit.value = true
+   nouser.value = true
   }
 
 }
@@ -50,8 +56,9 @@ let login = async() =>{
     >
       <div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-54" style="margin:150px">
           <span class="login100-form-title p-b-49"> Login </span>
-
+          <p style="color:red" v-if="nouser">No valid user</p>
           <div
+          
       
             class="wrap-input100 validate-input m-b-23"
           >
@@ -91,7 +98,7 @@ let login = async() =>{
             <div class="wrap-login100-form-btn">
               <div class="login100-form-bgbtn"></div>
               <!-- <button>login</button> -->
-              <button class="login100-form-btn" @click="login">Login</button>
+              <button v-if="submit" class="login100-form-btn" @click="login">Login</button>
             </div>
           </div>
           

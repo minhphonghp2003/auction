@@ -1,9 +1,10 @@
 <script setup>
 import { useRouter } from "vue-router";
-import { onMounted, onUpdated } from "vue";
 import("../js/main.js");
-let route = useRouter();
+
 let year = new Date().getFullYear();
+
+
 </script>
 
 <template>
