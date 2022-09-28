@@ -34,7 +34,7 @@ let reset = async () => {
       email:email,
       password:password.value
     })
-
+    await axios.delete("https://ecommerce-r6l7.onrender.com/user/email",{ params: { id:route.params.e_id } })
     router.push({name:'login'})
   } catch (error) {
     submit.value = true

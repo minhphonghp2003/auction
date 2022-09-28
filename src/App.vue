@@ -12,9 +12,16 @@ const router = useRouter();
 const { cookies } = useCookies();
 let token = ref(cookies.get("token"));
 let fullname = ref("");
+let userFetching = ref(false)
 
 let login = async () => {
+
+    router.push({name:'login'})
+};
+
+onMounted(async()=>{
   if (token.value) {
+  userFetching.value = true
     fullname.value = (
       await axios.get("https://ecommerce-r6l7.onrender.com/user/mydata", {
         headers: {
@@ -22,11 +29,9 @@ let login = async () => {
         },
       })
     ).data.user.fullname;
+  userFetching.value =false 
   }
-  else{
-    router.push({name:'login'})
-  }
-};
+})
 
 
 </script>
@@ -79,16 +84,16 @@ let login = async () => {
             <div class="header__top__right">
               <div class="header__top__links">
                 <a
-                style="cursor:pointer"
+                style="cursor:pointer; color:cyan"
                   :key="fullname"
-                  v-if="!fullname"
+                  v-if="!fullname && !userFetching"
                  @click="login" 
                   >Sign in</a
                 >
                 <router-link
-                 
+                  style="color:cyan" 
                   :key="fullname"
-                  v-if="fullname"
+                  v-if="fullname && !userFetching"
                   :to="{ name: 'profile' }"
                   >{{ fullname }}</router-link
                 >
@@ -176,7 +181,7 @@ let login = async () => {
               The customer is at the heart of our unique business model, which
               includes design.
             </p>
-            <a href="#"><img src="/src/assets/img/payment.png" alt="" /></a>
+         
           </div>
         </div>
         <div class="col-lg-2 offset-lg-1 col-md-3 col-sm-6">

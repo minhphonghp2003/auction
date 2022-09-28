@@ -15,7 +15,7 @@ let section = ref("new");
 let mostWatched = ref({});
 
 function compareNumbers(a, b) {
-  return a.b_count - b.b_count;
+  return b.b_count - a.b_count;
 }
 
 onMounted(async () => {
@@ -26,22 +26,28 @@ onMounted(async () => {
     element.image = Buffer.from(element.image).toString("base64");
     element.date_end = element.date_end.split("T")[0]
   });
-  subproduct.value = JSON.parse(JSON.stringify(product.value));
+  subproduct.value = JSON.parse(JSON.stringify(product.value.reverse()));
   renderMost();
   renderNew();
-  countDown(mostWatched.value.date_end)
+  if(mostWatched.value){
+    countDown(mostWatched.value.date_end)
+
+  }
   product.value = product.value.splice(0,9)
 });
 
 let renderMost = () => {
   product.value = JSON.parse(JSON.stringify(subproduct.value));
-  product.value.sort(compareNumbers).reverse();
-  product.value = product.value.splice(0, product.value.length / 2);
+  product.value.sort(compareNumbers);
+  product.value.splice(0, product.value.length / 2);
   section.value = "most";
   mostWatched.value = product.value[0];
-  let dateEnd = mostWatched.value.date_end.split("-");
-  mostWatched.value.date_end = new Date(dateEnd[0], dateEnd[1] - 1, dateEnd[2]);
-  product.value.shift()
+  if(mostWatched.value){
+
+    let dateEnd = mostWatched.value.date_end.split("-");
+    mostWatched.value.date_end = new Date(dateEnd[0], dateEnd[1] - 1, dateEnd[2]);
+    product.value.shift()
+  }
 };
 
 let renderNew = () => {
@@ -65,7 +71,7 @@ setInterval(()=>{
   mostWatched.value.seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
   if (distance < 0) {
-    clearInterval(x);
+    clearInterval();
   return
   }
 
@@ -103,7 +109,7 @@ setInterval(()=>{
     </div>
   </div>
   <ProductView :key="product" :product="product"></ProductView>
-  <MostWatchedView  v-if="done()" v-bind="mostWatched"></MostWatchedView>
+  <MostWatchedView  v-if="done() && mostWatched" v-bind="mostWatched"></MostWatchedView>
 </template>
 <style scoped>
 </style>

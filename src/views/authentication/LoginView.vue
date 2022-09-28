@@ -39,6 +39,10 @@ let login = async() =>{
   let credential = {username:username.value, password:password.value}
   try {
     let res = (await axios.post("https://ecommerce-r6l7.onrender.com/user/login",credential)).data
+    if(res.error){
+      throw new Error(error)
+    }
+
     cookies.set('token', res.token)
     submit.value = true
     router.push({name:'home'}).then(()=>router.go())

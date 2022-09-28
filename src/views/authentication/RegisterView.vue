@@ -81,7 +81,12 @@ let register = async () => {
     submit.value = true;
     router.push({ name: "home" }).then(() => router.go());
   } catch (error) {
-    errorWarn.value = "User already exists"
+    if(error.response.data.includes("user_un1")){
+      errorWarn.value = "Email already inused"
+    submit.value = true;
+      return
+    }
+    errorWarn.value = "Username already exists"
     submit.value = true;
   }
 };

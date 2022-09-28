@@ -5,8 +5,10 @@ import { onMounted, ref } from "vue";
 import { useCookies } from "vue3-cookies";
 import { ContentLoader } from "vue-content-loader";
 import { useRouter } from "vue-router";
+import ProductView from "../ProductView.vue";
+import { Buffer } from "buffer";
 
-let router = useRouter()
+let router = useRouter();
 let { cookies } = useCookies();
 let userData = ref({});
 let done = ref(false);
@@ -20,17 +22,22 @@ onMounted(async () => {
       },
     })
   ).data;
+  userData.value.user.avatar = Buffer.from(userData.value.user.avatar).toString(
+    "base64"
+  );
+  userData.value.product.forEach((element) => {
+    element.image = Buffer.from(element.image).toString("base64");
+    element.date_end = element.date_end.split("T")[0];
+  });
   done.value = true;
 });
 
-let logout = ()=>{
-    cookies.remove("token")
-    router.push({name:'home'}).then(() => { router.go() })
-}
-
-
-
-
+let logout = () => {
+  cookies.remove("token");
+  router.push({ name: "home" }).then(() => {
+    router.go();
+  });
+};
 </script>
 
 <template>
@@ -60,8 +67,7 @@ let logout = ()=>{
           <div class="user-heading round">
             <a href="#">
               <img
-                src="https://bootdey.com/img/Content/avatar/avatar3.png"
-                alt=""
+                v-bind:src="'data:image/jpeg;base64,' + userData.user.avatar"
               />
             </a>
             <h1>{{ userData.user.fullname }}</h1>
@@ -76,7 +82,12 @@ let logout = ()=>{
               <a href="#"> <i class="fa fa-edit"></i> Edit profile</a>
             </li>
             <li>
-              <a href="#" @click="logout"> <i class="fa fa-edit"></i> Log out</a>
+              <a href="#" @click="logout">
+                <i class="fa fa-user"></i> Log out</a
+              >
+            </li>
+            <li v-if="userData.user.role == 'seller'">
+              <a href="#"> <i class="fa fa-edit"></i> Add product</a>
             </li>
           </ul>
         </div>
@@ -112,66 +123,14 @@ let logout = ()=>{
           </div>
         </div>
         <div>
-          <div class="row">
-            <div
-              v-for="product of userData.product"
-              :key="product"
-              class="col-md-6"
-            >
-              <div class="panel">
-                <div class="panel-body">
-                  <div class="bio-chart">
-                    <div style="display: inline; width: 100px; height: 100px">
-                      <canvas width="100" height="100px"></canvas
-                      ><input
-                        class="knob"
-                        data-width="100"
-                        data-height="100"
-                        data-displayprevious="true"
-                        data-thickness=".2"
-                        value="35"
-                        data-fgcolor="#e06b7d"
-                        data-bgcolor="#e8e8e8"
-                        style="
-                          width: 54px;
-                          height: 33px;
-                          position: absolute;
-                          vertical-align: middle;
-                          margin-top: 33px;
-                          margin-left: -77px;
-                          border: 0px;
-                          font-weight: bold;
-                          font-style: normal;
-                          font-variant: normal;
-                          font-stretch: normal;
-                          font-size: 20px;
-                          line-height: normal;
-                          font-family: Arial;
-                          text-align: center;
-                          color: rgb(224, 107, 125);
-                          padding: 0px;
-                          -webkit-appearance: none;
-                          background: none;
-                        "
-                      />
-                    </div>
-                  </div>
-                  <div class="bio-desk">
-                    <h4 class="red">Envato Website</h4>
-                    <p>Started : 15 July</p>
-                    <p>Deadline : 15 August</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <ProductView :product="userData.product"></ProductView>
         </div>
       </div>
     </div>
   </div>
 </template>
 <style scoped>
-@import "https://netdna.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css";
+@import "../../assets/css/bootstrap.min.css";
 body {
   color: #797979;
   background: #f1f2f7;
