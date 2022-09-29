@@ -18,7 +18,30 @@ let { cookies } = useCookies();
 let userData = ref({});
 let done = ref(false);
 let token = ref(cookies.get("token"));
-let error = ref(false)
+let error = ref(false);
+let originAvtChange = ref(false);
+
+const b64toBlob = (b64Data, contentType='', sliceSize=512) => {
+  const byteCharacters = atob(b64Data);
+  const byteArrays = [];
+
+  for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+    const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+    const byteNumbers = new Array(slice.length);
+    for (let i = 0; i < slice.length; i++) {
+      byteNumbers[i] = slice.charCodeAt(i);
+    }
+
+    const byteArray = new Uint8Array(byteNumbers);
+    byteArrays.push(byteArray);
+  }
+
+  const blob = new Blob(byteArrays, {type: contentType});
+  return blob;
+}
+
+
 
 onMounted(async () => {
   userData.value = (
@@ -30,11 +53,11 @@ onMounted(async () => {
   ).data;
 
   updateData.value.user = JSON.parse(JSON.stringify(userData.value.user));
-  originAvatar = userData.value.user.avatar;
-  console.log(originAvatar);
   userData.value.user.avatar = Buffer.from(userData.value.user.avatar).toString(
     "base64"
   );
+  originAvatar = userData.value.user.avatar;
+  originAvatar = URL.createObjectURL(new Blob([originAvatar]));
   updateData.value.user.avatar = Buffer.from(
     userData.value.user.avatar
   ).toString("base64");
@@ -70,13 +93,12 @@ let toggleActive = (element) => {
   active.value = element;
   editMode.value = false;
   if (element == "edit") {
-    
-    updateData.value.user.avatar = originAvatar
+    updateData.value.user.avatar = originAvatar;
+    console.log(updateData.value.user.avatar);
     editMode.value = true;
   }
 };
 
-// password
 let update = async () => {
   try {
     done.value = false;
@@ -122,16 +144,16 @@ let update = async () => {
     router.push({ name: "profile" }).then(() => {
       router.go();
     });
-  } catch (error) {
+  } catch (err) {
     done.value = true;
-    console.log(error);
-  error.value = true
+    error.value = true;
   }
 };
 //
 let uploadImage = (event) => {
+  originAvtChange.value = true;
   updateData.value.user.avatar = event.target.files[0];
-  onUpdateAvatar.value = URL.createObjectURL(event.target.files[0]); 
+  onUpdateAvatar.value = URL.createObjectURL(event.target.files[0]);
 };
 </script>
 
@@ -165,10 +187,8 @@ let uploadImage = (event) => {
                 v-if="!editMode"
                 v-bind:src="'data:image/jpeg;base64,' + userData.user.avatar"
               />
-              <img
-                v-if="editMode"
-                :src=" onUpdateAvatar"
-              />
+              
+              <img v-if="editMode" :src="onUpdateAvatar" />
             </a>
             <input
               v-if="editMode"
@@ -213,7 +233,7 @@ let uploadImage = (event) => {
           <div class="panel-body bio-graph-info">
             <h1 v-if="!editMode">Bio Graph</h1>
             <h1 v-if="editMode">
-              <p v-if="error" style="color : red">Something went wrong</p>
+              <p v-if="error" style="color: red">Something went wrong</p>
               <a @click="update" href="#">
                 <i class="fa fa-edit"></i> <span>Update</span>
               </a>
