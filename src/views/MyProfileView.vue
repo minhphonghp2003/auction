@@ -18,7 +18,7 @@ let { cookies } = useCookies();
 let userData = ref({});
 let done = ref(false);
 let token = ref(cookies.get("token"));
-let error = ref(false);
+let error = ref("");
 let originAvtChange = ref(false);
 
 const b64toBlob = (b64Data, contentType = "", sliceSize = 512) => {
@@ -41,8 +41,6 @@ const b64toBlob = (b64Data, contentType = "", sliceSize = 512) => {
   return blob;
 };
 
-
-
 onMounted(async () => {
   userData.value = (
     await axios.get("https://ecommerce-r6l7.onrender.com/user/mydata", {
@@ -55,8 +53,8 @@ onMounted(async () => {
   updateData.value.user = JSON.parse(JSON.stringify(userData.value.user));
   userData.value.user.avatar = Buffer.from(userData.value.user.avatar).toString(
     "base64"
-    );
-    
+  );
+
   originAvatar = userData.value.user.avatar;
   let contentType = "image/png";
   originAvatar = URL.createObjectURL(b64toBlob(originAvatar, contentType));
@@ -91,27 +89,25 @@ let logout = () => {
   });
 };
 
-let toggleActive =async (element) => {
+let toggleActive = async (element) => {
   active.value = element;
   editMode.value = false;
   if (element == "edit") {
-    let url = await fetch(originAvatar)
-    let blob = await url.blob()
-    updateData.value.user.avatar =new File([blob], "image");
+    let url = await fetch(originAvatar);
+    let blob = await url.blob();
+    updateData.value.user.avatar = new File([blob], "image");
     onUpdateAvatar.value = originAvatar;
     editMode.value = true;
   }
 };
 
-// delete firebase img
 // update password
-
 
 let update = async () => {
   try {
     done.value = false;
     let form_data = new FormData();
-    
+
     let data = {
       fullname: updateData.value.user.fullname,
       phone: updateData.value.user.phone,
@@ -154,8 +150,12 @@ let update = async () => {
       router.go();
     });
   } catch (err) {
+    if (err.response.data.includes("user_un1")) {
+      error.value = "Email address already inused";
+    } else {
+      error.value = "Oops! Something went wrong!!";
+    }
     done.value = true;
-    error.value = true;
   }
 };
 //
@@ -242,7 +242,7 @@ let uploadImage = (event) => {
           <div class="panel-body bio-graph-info">
             <h1 v-if="!editMode">Bio Graph</h1>
             <h1 v-if="editMode">
-              <p v-if="error" style="color: red">Something went wrong</p>
+              <p v-if="error" style="color: red">{{ error }}</p>
               <a @click="update" href="#">
                 <i class="fa fa-edit"></i> <span>Update</span>
               </a>
@@ -294,7 +294,7 @@ let uploadImage = (event) => {
                   <span>Phone </span>:
                   <span v-if="!editMode"> {{ userData.user.phone }}</span>
                   <span v-if="editMode">
-                    <input v-model="updateData.user.email" type="text" />
+                    <input v-model="updateData.user.phone" type="text" />
                   </span>
                 </p>
               </div>
