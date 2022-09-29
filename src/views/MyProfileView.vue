@@ -103,6 +103,7 @@ let toggleActive = async (element) => {
 
 // update password
 //  add product 
+// backend- add default shipping addr
 let update = async () => {
   try {
     done.value = false;
