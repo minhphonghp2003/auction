@@ -21,7 +21,7 @@ let token = ref(cookies.get("token"));
 let error = ref(false);
 let originAvtChange = ref(false);
 
-const b64toBlob = (b64Data, contentType='', sliceSize=512) => {
+const b64toBlob = (b64Data, contentType = "", sliceSize = 512) => {
   const byteCharacters = atob(b64Data);
   const byteArrays = [];
 
@@ -37,11 +37,16 @@ const b64toBlob = (b64Data, contentType='', sliceSize=512) => {
     byteArrays.push(byteArray);
   }
 
-  const blob = new Blob(byteArrays, {type: contentType});
+  const blob = new Blob(byteArrays, { type: contentType });
   return blob;
-}
+};
 
-
+let blobToFile = (data) => {
+  let file = new File(data, "avatar.png", {
+    type: "image/png",
+  });
+  return file
+};
 
 onMounted(async () => {
   userData.value = (
@@ -57,7 +62,8 @@ onMounted(async () => {
     "base64"
   );
   originAvatar = userData.value.user.avatar;
-  originAvatar = URL.createObjectURL(new Blob([originAvatar]));
+  let contentType = "image/png";
+  originAvatar = URL.createObjectURL(b64toBlob(originAvatar, contentType));
   updateData.value.user.avatar = Buffer.from(
     userData.value.user.avatar
   ).toString("base64");
@@ -94,7 +100,8 @@ let toggleActive = (element) => {
   editMode.value = false;
   if (element == "edit") {
     updateData.value.user.avatar = originAvatar;
-    console.log(updateData.value.user.avatar);
+    console.log(blobToFile(updateData.value.user.avatar));
+    onUpdateAvatar.value = originAvatar;
     editMode.value = true;
   }
 };
@@ -154,6 +161,7 @@ let uploadImage = (event) => {
   originAvtChange.value = true;
   updateData.value.user.avatar = event.target.files[0];
   onUpdateAvatar.value = URL.createObjectURL(event.target.files[0]);
+  console.log(updateData.value.user.avatar);
 };
 </script>
 
@@ -187,7 +195,7 @@ let uploadImage = (event) => {
                 v-if="!editMode"
                 v-bind:src="'data:image/jpeg;base64,' + userData.user.avatar"
               />
-              
+
               <img v-if="editMode" :src="onUpdateAvatar" />
             </a>
             <input
