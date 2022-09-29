@@ -41,12 +41,7 @@ const b64toBlob = (b64Data, contentType = "", sliceSize = 512) => {
   return blob;
 };
 
-let blobToFile = (data) => {
-  let file = new File(data, "avatar.png", {
-    type: "image/png",
-  });
-  return file
-};
+
 
 onMounted(async () => {
   userData.value = (
@@ -60,7 +55,8 @@ onMounted(async () => {
   updateData.value.user = JSON.parse(JSON.stringify(userData.value.user));
   userData.value.user.avatar = Buffer.from(userData.value.user.avatar).toString(
     "base64"
-  );
+    );
+    
   originAvatar = userData.value.user.avatar;
   let contentType = "image/png";
   originAvatar = URL.createObjectURL(b64toBlob(originAvatar, contentType));
@@ -95,21 +91,27 @@ let logout = () => {
   });
 };
 
-let toggleActive = (element) => {
+let toggleActive =async (element) => {
   active.value = element;
   editMode.value = false;
   if (element == "edit") {
-    updateData.value.user.avatar = originAvatar;
-    console.log(blobToFile(updateData.value.user.avatar));
+    let url = await fetch(originAvatar)
+    let blob = await url.blob()
+    updateData.value.user.avatar =new File([blob], "image");
     onUpdateAvatar.value = originAvatar;
     editMode.value = true;
   }
 };
 
+// delete firebase img
+// update password
+
+
 let update = async () => {
   try {
     done.value = false;
     let form_data = new FormData();
+    
     let data = {
       fullname: updateData.value.user.fullname,
       phone: updateData.value.user.phone,
@@ -161,7 +163,6 @@ let uploadImage = (event) => {
   originAvtChange.value = true;
   updateData.value.user.avatar = event.target.files[0];
   onUpdateAvatar.value = URL.createObjectURL(event.target.files[0]);
-  console.log(updateData.value.user.avatar);
 };
 </script>
 
