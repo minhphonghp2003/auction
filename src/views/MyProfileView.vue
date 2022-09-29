@@ -9,13 +9,16 @@ import ProductView from "../components/ProductView.vue";
 import { Buffer } from "buffer";
 
 let router = useRouter();
+let onUpdateAvatar = ref({});
 let updateData = ref({});
 let editMode = ref(false);
+let originAvatar;
 let active = ref("profile");
 let { cookies } = useCookies();
 let userData = ref({});
 let done = ref(false);
 let token = ref(cookies.get("token"));
+let error = ref(false)
 
 onMounted(async () => {
   userData.value = (
@@ -25,12 +28,17 @@ onMounted(async () => {
       },
     })
   ).data;
+
+  updateData.value.user = JSON.parse(JSON.stringify(userData.value.user));
+  originAvatar = userData.value.user.avatar;
+  console.log(originAvatar);
   userData.value.user.avatar = Buffer.from(userData.value.user.avatar).toString(
     "base64"
   );
-  updateData.value.user = JSON.parse(JSON.stringify(userData.value.user));
-  updateData.value.user.avatar = null
-    userData.value.product.forEach((element) => {
+  updateData.value.user.avatar = Buffer.from(
+    userData.value.user.avatar
+  ).toString("base64");
+  userData.value.product.forEach((element) => {
     element.image = Buffer.from(element.image).toString("base64");
     element.date_end = element.date_end.split("T")[0];
   });
@@ -48,7 +56,6 @@ onMounted(async () => {
   updateData.value.shipping = JSON.parse(
     JSON.stringify(userData.value.shipping)
   );
-  updateData.value.user = JSON.parse(JSON.stringify(userData.value.user));
   done.value = true;
 });
 
@@ -63,25 +70,31 @@ let toggleActive = (element) => {
   active.value = element;
   editMode.value = false;
   if (element == "edit") {
+    updateData.value.user.avatar = originAvatar
     editMode.value = true;
   }
 };
-// image
+
 // password
 let update = async () => {
   try {
+    done.value = false;
+    let form_data = new FormData();
+    let data = {
+      fullname: updateData.value.user.fullname,
+      phone: updateData.value.user.phone,
+      email: updateData.value.user.email,
+      country: updateData.value.user.country,
+      default_shipping_address: updateData.value.user.default_shipping_address,
+      role: updateData.value.user.role,
+      user_images: updateData.value.user.avatar,
+    };
+    for (var key in data) {
+      form_data.append(key, data[key]);
+    }
     await axios.put(
       "https://ecommerce-r6l7.onrender.com/user/update",
-      {
-        fullname: updateData.value.user.fullname,
-        phone: updateData.value.user.phone,
-        email: updateData.value.user.email,
-        country: updateData.value.user.country,
-        default_shipping_address:
-          updateData.value.user.default_shipping_address,
-        role: updateData.value.user.role,
-        user_images:updateData.value.user.avatar ,
-      },
+      form_data,
       {
         headers: {
           token: cookies.get("token"),
@@ -105,23 +118,19 @@ let update = async () => {
       }
     );
 
-
     router.push({ name: "profile" }).then(() => {
       router.go();
     });
   } catch (error) {
+    done.value = true;
     console.log(error);
+  error.value = true
   }
 };
-// 
+//
 let uploadImage = (event) => {
-  let image = event.target.files[0];
-  const reader = new FileReader();
-  reader.readAsDataURL(image);
-  reader.onload = (e) => {
-    let base64Image =e.target.result.split(';base64,').pop();
-
-  };
+  updateData.value.user.avatar = event.target.files[0];
+  onUpdateAvatar.value = URL.createObjectURL(event.target.files[0]); 
 };
 </script>
 
@@ -155,7 +164,10 @@ let uploadImage = (event) => {
                 v-if="!editMode"
                 v-bind:src="'data:image/jpeg;base64,' + userData.user.avatar"
               />
-              <img v-if="editMode" :src="updateData.user.avatar" />
+              <img
+                v-if="editMode"
+                :src=" onUpdateAvatar"
+              />
             </a>
             <input
               v-if="editMode"
@@ -200,6 +212,7 @@ let uploadImage = (event) => {
           <div class="panel-body bio-graph-info">
             <h1 v-if="!editMode">Bio Graph</h1>
             <h1 v-if="editMode">
+              <p v-if="error" style="color : red">Something went wrong</p>
               <a @click="update" href="#">
                 <i class="fa fa-edit"></i> <span>Update</span>
               </a>
