@@ -70,6 +70,7 @@ let toggleActive = (element) => {
   active.value = element;
   editMode.value = false;
   if (element == "edit") {
+    
     updateData.value.user.avatar = originAvatar
     editMode.value = true;
   }
