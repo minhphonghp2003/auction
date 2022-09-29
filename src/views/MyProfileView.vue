@@ -102,7 +102,7 @@ let toggleActive = async (element) => {
 };
 
 // update password
-
+//  add product 
 let update = async () => {
   try {
     done.value = false;
