@@ -120,13 +120,6 @@ let uploadImage = (event) => {
   reader.readAsDataURL(image);
   reader.onload = (e) => {
     let base64Image =e.target.result.split(';base64,').pop();
-    // fs.writeFile('image.png', base64Image, {encoding: 'base64'}, function(err) {
-    // if(err){
-    //   console.log();
-
-    // }
-    // updateData.value.user.avatar = "image.png"
-});
 
   };
 };
