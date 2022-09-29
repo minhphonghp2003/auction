@@ -29,7 +29,8 @@ onMounted(async () => {
     "base64"
   );
   updateData.value.user = JSON.parse(JSON.stringify(userData.value.user));
-  userData.value.product.forEach((element) => {
+  updateData.value.user.avatar = null
+    userData.value.product.forEach((element) => {
     element.image = Buffer.from(element.image).toString("base64");
     element.date_end = element.date_end.split("T")[0];
   });
@@ -78,7 +79,7 @@ let update = async () => {
         default_shipping_address:
           updateData.value.user.default_shipping_address,
         role: updateData.value.user.role,
-        
+        user_images:updateData.value.user.avatar ,
       },
       {
         headers: {
@@ -86,13 +87,38 @@ let update = async () => {
         },
       }
     );
+
+    await axios.put(
+      "https://ecommerce-r6l7.onrender.com/address",
+      {
+        city: updateData.value.shipping.city,
+        district: updateData.value.shipping.district,
+        commune_ward: updateData.value.shipping.commune_ward,
+        street: updateData.value.shipping.street,
+        id: userData.value.user.default_shipping_address,
+      },
+      {
+        headers: {
+          token: cookies.get("token"),
+        },
+      }
+    );
+
+    router.push({ name: "profile" }).then(() => {
+      router.go();
+    });
   } catch (error) {
     console.log(error);
   }
 };
-
-let uploadImage = () => {
-  updateData.value.user.avatar = event.target.value;
+// 
+let uploadImage = (event) => {
+  let image = event.target.files[0];
+  const reader = new FileReader();
+  reader.readAsDataURL(image);
+  reader.onload = (e) => {
+    updateData.value.user.avatar =Buffer.from(e.target.result,'base64') ;
+  };
 };
 </script>
 
@@ -126,6 +152,7 @@ let uploadImage = () => {
                 v-if="!editMode"
                 v-bind:src="'data:image/jpeg;base64,' + userData.user.avatar"
               />
+              <img v-if="editMode" :src="updateData.user.avatar" />
             </a>
             <input
               v-if="editMode"
