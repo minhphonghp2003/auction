@@ -5,10 +5,13 @@ import { onMounted, ref } from "vue";
 import { useCookies } from "vue3-cookies";
 import { ContentLoader } from "vue-content-loader";
 import { useRouter } from "vue-router";
-import ProductView from "../ProductView.vue";
+import ProductView from "../components/ProductView.vue";
 import { Buffer } from "buffer";
 
 let router = useRouter();
+let updateData = ref({});
+let editMode = ref(false);
+let active = ref("profile");
 let { cookies } = useCookies();
 let userData = ref({});
 let done = ref(false);
@@ -25,10 +28,26 @@ onMounted(async () => {
   userData.value.user.avatar = Buffer.from(userData.value.user.avatar).toString(
     "base64"
   );
+  updateData.value.user = JSON.parse(JSON.stringify(userData.value.user));
   userData.value.product.forEach((element) => {
     element.image = Buffer.from(element.image).toString("base64");
     element.date_end = element.date_end.split("T")[0];
   });
+  userData.value.shipping = (
+    await axios.get("https://ecommerce-r6l7.onrender.com/address", {
+      params: {
+        id: userData.value.user.default_shipping_address,
+      },
+      headers: {
+        token: cookies.get("token"),
+      },
+    })
+  ).data;
+
+  updateData.value.shipping = JSON.parse(
+    JSON.stringify(userData.value.shipping)
+  );
+  updateData.value.user = JSON.parse(JSON.stringify(userData.value.user));
   done.value = true;
 });
 
@@ -37,6 +56,43 @@ let logout = () => {
   router.push({ name: "home" }).then(() => {
     router.go();
   });
+};
+
+let toggleActive = (element) => {
+  active.value = element;
+  editMode.value = false;
+  if (element == "edit") {
+    editMode.value = true;
+  }
+};
+
+let update = async () => {
+  try {
+    await axios.put(
+      "https://ecommerce-r6l7.onrender.com/user/update",
+      {
+        fullname: updateData.value.user.fullname,
+        phone: updateData.value.user.phone,
+        email: updateData.value.user.email,
+        country: updateData.value.user.country,
+        default_shipping_address:
+          updateData.value.user.default_shipping_address,
+        role: updateData.value.user.role,
+        
+      },
+      {
+        headers: {
+          token: cookies.get("token"),
+        },
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+let uploadImage = () => {
+  updateData.value.user.avatar = event.target.value;
 };
 </script>
 
@@ -67,27 +123,43 @@ let logout = () => {
           <div class="user-heading round">
             <a href="#">
               <img
+                v-if="!editMode"
                 v-bind:src="'data:image/jpeg;base64,' + userData.user.avatar"
               />
             </a>
+            <input
+              v-if="editMode"
+              type="file"
+              accept="image/*"
+              @change="uploadImage($event)"
+            />
             <h1>{{ userData.user.fullname }}</h1>
             <p>{{ userData.user.email }}</p>
           </div>
 
           <ul class="nav nav-pills nav-stacked">
-            <li class="active">
-              <a href="#"> <i class="fa fa-user"></i> Profile</a>
+            <li :class="{ active: active == 'profile' }">
+              <a @click="toggleActive('profile')" href="#">
+                <i class="fa fa-user"></i> <span>Profile</span>
+              </a>
             </li>
-            <li>
-              <a href="#"> <i class="fa fa-edit"></i> Edit profile</a>
+            <li :class="{ active: active == 'edit' }">
+              <a @click="toggleActive('edit')" href="#">
+                <i class="fa fa-edit"></i> <span>Edit profile</span>
+              </a>
             </li>
             <li>
               <a href="#" @click="logout">
-                <i class="fa fa-user"></i> Log out</a
-              >
+                <i class="fa fa-user"></i> <span>Log out</span>
+              </a>
             </li>
-            <li v-if="userData.user.role == 'seller'">
-              <a href="#"> <i class="fa fa-edit"></i> Add product</a>
+            <li
+              :class="{ active: active == 'addproduct' }"
+              v-if="userData.user.role == 'seller'"
+            >
+              <a @click="toggleActive('addproduct')" href="#">
+                <i class="fa fa-edit"></i> <span>Add product</span>
+              </a>
             </li>
           </ul>
         </div>
@@ -96,28 +168,126 @@ let logout = () => {
         <div class="panel"></div>
         <div class="panel">
           <div class="panel-body bio-graph-info">
-            <h1>Bio Graph</h1>
+            <h1 v-if="!editMode">Bio Graph</h1>
+            <h1 v-if="editMode">
+              <a @click="update" href="#">
+                <i class="fa fa-edit"></i> <span>Update</span>
+              </a>
+            </h1>
 
             <div class="row">
               <div class="bio-row">
-                <p><span>Full Name </span>: {{ userData.user.fullname }}</p>
+                <p>
+                  <span>Full Name </span>:
+                  <span v-if="!editMode"> {{ userData.user.fullname }}</span>
+                  <span v-if="editMode">
+                    <input v-model="updateData.user.fullname" type="text" />
+                  </span>
+                </p>
               </div>
 
               <div class="bio-row">
-                <p><span>Country </span>: {{ userData.user.country }}</p>
+                <p>
+                  <span>Country </span>:
+                  <span v-if="!editMode"> {{ userData.user.country }}</span>
+                  <span v-if="editMode">
+                    <input v-model="updateData.user.country" type="text" />
+                  </span>
+                </p>
               </div>
               <div class="bio-row">
-                <p><span>Username</span>:{{ userData.user.username }}</p>
+                <p>
+                  <span>Username</span>:
+                  <span> {{ userData.user.username }}</span>
+                </p>
               </div>
               <div class="bio-row">
-                <p><span>Role </span>: {{ userData.user.role }}</p>
+                <p>
+                  <span>Role </span>: <span> {{ userData.user.role }}</span>
+                </p>
               </div>
               <div class="bio-row">
-                <p><span>Email </span>: {{ userData.user.email }}</p>
+                <p>
+                  <span>Email </span>:
+                  <span v-if="!editMode"> {{ userData.user.email }}</span>
+                  <span v-if="editMode">
+                    <input v-model="updateData.user.email" type="text" />
+                  </span>
+                </p>
               </div>
 
               <div class="bio-row">
-                <p><span>Phone </span>: {{ userData.user.phone }}</p>
+                <p>
+                  <span>Phone </span>:
+                  <span v-if="!editMode"> {{ userData.user.phone }}</span>
+                  <span v-if="editMode">
+                    <input v-model="updateData.user.email" type="text" />
+                  </span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="panel">
+                <div class="panel-body">
+                  <div class="bio-chart">
+                    <div style="display: inline; width: 100px; height: 100px">
+                      <canvas width="100" height="100px"></canvas>
+                    </div>
+                  </div>
+                  <div class="bio-desk">
+                    <h4 class="red">Shipping address</h4>
+                    <p>
+                      City :
+                      <span v-if="!editMode">
+                        {{ userData.shipping.city }}</span
+                      >
+                      <span v-if="editMode">
+                        <input type="text" v-model="updateData.shipping.city" />
+                      </span>
+                    </p>
+
+                    <p>
+                      District :
+                      <span v-if="!editMode">
+                        {{ userData.shipping.district }}</span
+                      >
+                      <span v-if="editMode">
+                        <input
+                          type="text"
+                          v-model="updateData.shipping.district"
+                        />
+                      </span>
+                    </p>
+                    <p>
+                      Commune/Ward :
+                      <span v-if="!editMode">
+                        {{ userData.shipping.commune_ward }}</span
+                      >
+                      <span v-if="editMode">
+                        <input
+                          type="text"
+                          v-model="updateData.shipping.commune_ward"
+                        />
+                      </span>
+                    </p>
+                    <p>
+                      Street :
+                      <span v-if="!editMode">
+                        {{ userData.shipping.street }}</span
+                      >
+                      <span v-if="editMode">
+                        <input
+                          type="text"
+                          v-model="updateData.shipping.street"
+                        />
+                      </span>
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -130,7 +300,7 @@ let logout = () => {
   </div>
 </template>
 <style scoped>
-@import "../../assets/css/bootstrap.min.css";
+@import "../assets/css/bootstrap.min.css";
 body {
   color: #797979;
   background: #f1f2f7;

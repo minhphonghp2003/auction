@@ -1,10 +1,10 @@
 <script setup>
 import { ref } from "@vue/reactivity";
 import axios from "axios";
-import ProductView from "../ProductView.vue";
-import HeroView from "./HeroView.vue";
+import ProductView from "../components/ProductView.vue";
+import HeroView from "../components/home/HeroView.vue";
 import { ContentLoader } from "vue-content-loader";
-import MostWatchedView from "./MostWatchedView.vue";
+import MostWatchedView from "../components/home/MostWatchedView.vue";
 
 import { Buffer } from "buffer";
 import { onMounted } from "@vue/runtime-core";
@@ -23,6 +23,9 @@ onMounted(async () => {
     await axios.get("https://ecommerce-r6l7.onrender.com/product/all")
   ).data;
   product.value.forEach((element) => {
+    if (!element.b_count) {
+      element.b_count = 0
+    }
     element.image = Buffer.from(element.image).toString("base64");
     element.date_end = element.date_end.split("T")[0]
   });
@@ -37,11 +40,12 @@ onMounted(async () => {
 });
 
 let renderMost = () => {
-  product.value = JSON.parse(JSON.stringify(subproduct.value));
-  product.value.sort(compareNumbers);
-  product.value.splice(0, product.value.length / 2);
+  let sortedProduct = JSON.parse(JSON.stringify(subproduct.value));
+  sortedProduct.sort(compareNumbers);
+  sortedProduct.slice(0, sortedProduct.length / 2);
   section.value = "most";
-  mostWatched.value = product.value[0];
+  mostWatched.value = sortedProduct[0];
+  product.value = sortedProduct
   if(mostWatched.value){
 
     let dateEnd = mostWatched.value.date_end.split("-");
@@ -108,7 +112,7 @@ setInterval(()=>{
       </content-loader>
     </div>
   </div>
-  <ProductView :key="product" :product="product"></ProductView>
+  <ProductView  :product="product"></ProductView>
   <MostWatchedView  v-if="done() && mostWatched" v-bind="mostWatched"></MostWatchedView>
 </template>
 <style scoped>

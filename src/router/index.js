@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/homeView/HomeView.vue'
+import HomeView from '../views/HomeView.vue'
 import AuctionView from '../views/AuctionView.vue'
 import AuctionDetailView from '../views/AuctionDetailView.vue'
 import BlogView from '../views/BLogView.vue'
@@ -11,7 +11,7 @@ import LoginView from '../views/authentication/LoginView.vue'
 import RegisterView from '../views/authentication/RegisterView.vue'
 import ChangePassword from '../views/authentication/ChangePassword.vue'
 import ResetPasswordView from '../views/authentication/ResetPasswordView.vue'
-import MyProfileView from '../views/user/MyProfileView.vue'
+import MyProfileView from '../views/MyProfileView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
