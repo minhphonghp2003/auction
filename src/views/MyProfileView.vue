@@ -7,6 +7,7 @@ import { ContentLoader } from "vue-content-loader";
 import { useRouter } from "vue-router";
 import ProductView from "../components/ProductView.vue";
 import { Buffer } from "buffer";
+import AddProduct from "../components/AddProduct.vue"
 
 let router = useRouter();
 let spinner = ref(false);
@@ -193,6 +194,13 @@ let makePassChange = async () => {
     error.value = err;
   }
 };
+
+let toggleAddP = ()=>{
+  active.value='profile'
+}
+
+
+
 </script>
 
 <template>
@@ -262,7 +270,7 @@ let makePassChange = async () => {
             </li>
             <li
               :class="{ active: active == 'addproduct' }"
-              v-if="userData.user.role == 'seller'"
+              v-if="userData.user.role == 'seller' && active!='edit'"
             >
               <a @click="toggleActive('addproduct')" href="#">
                 <i class="fa fa-edit"></i> <span>Add product</span>
@@ -406,6 +414,7 @@ let makePassChange = async () => {
       </div>
     </div>
   </div>
+<AddProduct @toggleAddP="toggleAddP" v-if="active == 'addproduct'" ></AddProduct>
 </template>
 <style scoped>
 @import "../assets/css/bootstrap.min.css";
