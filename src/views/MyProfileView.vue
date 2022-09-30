@@ -159,7 +159,6 @@ let update = async () => {
     done.value = true;
   }
 };
-//
 let uploadImage = (event) => {
   originAvtChange.value = true;
   updateData.value.user.avatar = event.target.files[0];
