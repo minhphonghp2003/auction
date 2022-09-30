@@ -104,7 +104,6 @@ let toggleActive = async (element) => {
   }
 };
 
-//  add product
 let update = async () => {
   try {
     done.value = false;

@@ -1,5 +1,5 @@
 import { fileURLToPath, URL } from 'node:url'
-
+import inject from '@rollup/plugin-inject'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
@@ -9,9 +9,15 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
-      
+      './runtimeConfig': './runtimeConfig.browser',
     }
   },
+  build: {
+		rollupOptions: {
+			external: [inject({ Buffer: ['Buffer', 'Buffer'] })],
+      
+		},
+	}, 
    css: {
     preprocessorOptions: {
       scss: {
