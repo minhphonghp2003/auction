@@ -9,12 +9,13 @@ import ProductView from "../components/ProductView.vue";
 import { Buffer } from "buffer";
 
 let router = useRouter();
-let password = ref('')
+let spinner = ref(false);
+let password = ref("");
 let onUpdateAvatar = ref({});
 let updateData = ref({});
 let editMode = ref(false);
 let originAvatar;
-let onChangePass = ref(false)
+let onChangePass = ref(false);
 let active = ref("profile");
 let { cookies } = useCookies();
 let userData = ref({});
@@ -103,8 +104,7 @@ let toggleActive = async (element) => {
   }
 };
 
-// update password
-//  add product 
+//  add product
 let update = async () => {
   try {
     done.value = false;
@@ -167,28 +167,34 @@ let uploadImage = (event) => {
   onUpdateAvatar.value = URL.createObjectURL(event.target.files[0]);
 };
 
-let changepass = () =>{
-  onChangePass.value =!onChangePass.value 
-}
+let changepass = () => {
+  onChangePass.value = !onChangePass.value;
+};
 
-let makePassChange = async() =>{
+let makePassChange = async () => {
   try {
-    error.value = ''
-    if(password.value.length <=8){
-      throw new Error("Password's length must be longer than 8")
+    error.value = "";
+    spinner.value =true 
+    if (password.value.length <= 8) {
+      throw new Error("Password's length must be longer than 8");
     }
-    onChangePass.value = !onChangePass.value 
-   await axios.put("https://ecommerce-r6l7.onrender.com/user/password",{password:password.value},{headers:{
-    token:cookies.get('token')
-   }}) 
+    onChangePass.value = !onChangePass.value;
+    await axios.put(
+      "https://ecommerce-r6l7.onrender.com/user/password",
+      { password: password.value },
+      {
+        headers: {
+          token: cookies.get("token"),
+        },
+      }
+    );
+    spinner.value = false
   } catch (err) {
-    onChangePass.value = !onChangePass.value 
-    error.value = err 
+    onChangePass.value = !onChangePass.value;
+    spinner.value = false
+    error.value = err;
   }
-}
-
-
-
+};
 </script>
 
 <template>
@@ -232,9 +238,12 @@ let makePassChange = async() =>{
             />
             <p>{{ userData.user.username }}</p>
             <p>{{ userData.user.email }}</p>
-          <a @click="changepass" href="#">Change password</a> 
-          <input v-if="onChangePass" v-model="password" type="password">
-          <button v-if="onChangePass" @click="makePassChange">Change</button>
+            <a @click="changepass" v-if="!spinner" href="#">Change password</a>
+            <div v-if="spinner" class="spinner-border text-primary" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+            <input v-if="onChangePass" v-model="password" type="password" />
+            <button v-if="onChangePass" @click="makePassChange">Change</button>
           </div>
 
           <ul class="nav nav-pills nav-stacked">
