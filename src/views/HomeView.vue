@@ -19,6 +19,7 @@ function compareNumbers(a, b) {
 }
 
 onMounted(async () => {
+  
   product.value = (
     await axios.get("https://ecommerce-r6l7.onrender.com/product/all")
   ).data;

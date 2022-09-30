@@ -22,6 +22,7 @@ let login = async () => {
 onMounted(async()=>{
   if (token.value) {
   userFetching.value = true
+  try {
     fullname.value = (
       await axios.get("https://ecommerce-r6l7.onrender.com/user/mydata", {
         headers: {
@@ -30,6 +31,10 @@ onMounted(async()=>{
       })
     ).data.user.fullname;
   userFetching.value =false 
+    
+  } catch (error) {
+   userFetching.value = false 
+  }
   }
 })
 
