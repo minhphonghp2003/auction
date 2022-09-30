@@ -121,7 +121,7 @@ onMounted(async()=>{
         <div class="col-lg-3 col-md-3">
           <div class="header__logo">
             <router-link :to="{ name: 'home' }"
-              ><img src="/src/assets/img/icon/Bidthu -1.png" alt=""
+              ><img src="/src/assets/img/icon/Bidthu.png" alt=""
             /></router-link>
           </div>
         </div>
@@ -179,7 +179,7 @@ onMounted(async()=>{
           <div class="footer__about">
             <div class="footer__logo">
               <a href="#"
-                ><img src="/src/assets/img/icon/Bidthu -1.png" alt=""
+                ><img src="/src/assets/img/icon/Bidthu.png" alt=""
               /></a>
             </div>
             <p>
