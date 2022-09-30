@@ -9,10 +9,12 @@ import ProductView from "../components/ProductView.vue";
 import { Buffer } from "buffer";
 
 let router = useRouter();
+let password = ref('')
 let onUpdateAvatar = ref({});
 let updateData = ref({});
 let editMode = ref(false);
 let originAvatar;
+let onChangePass = ref(false)
 let active = ref("profile");
 let { cookies } = useCookies();
 let userData = ref({});
@@ -164,6 +166,29 @@ let uploadImage = (event) => {
   updateData.value.user.avatar = event.target.files[0];
   onUpdateAvatar.value = URL.createObjectURL(event.target.files[0]);
 };
+
+let changepass = () =>{
+  onChangePass.value =!onChangePass.value 
+}
+
+let makePassChange = async() =>{
+  try {
+    error.value = ''
+    if(password.value.length <=8){
+      throw new Error("Password's length must be longer than 8")
+    }
+    onChangePass.value = !onChangePass.value 
+   await axios.put("https://ecommerce-r6l7.onrender.com/user/password",{password:password.value},{headers:{
+    token:cookies.get('token')
+   }}) 
+  } catch (err) {
+    onChangePass.value = !onChangePass.value 
+    error.value = err 
+  }
+}
+
+
+
 </script>
 
 <template>
@@ -205,8 +230,11 @@ let uploadImage = (event) => {
               accept="image/*"
               @change="uploadImage($event)"
             />
-            <h1>{{ userData.user.fullname }}</h1>
+            <p>{{ userData.user.username }}</p>
             <p>{{ userData.user.email }}</p>
+          <a @click="changepass" href="#">Change password</a> 
+          <input v-if="onChangePass" v-model="password" type="password">
+          <button v-if="onChangePass" @click="makePassChange">Change</button>
           </div>
 
           <ul class="nav nav-pills nav-stacked">
@@ -241,8 +269,8 @@ let uploadImage = (event) => {
         <div class="panel">
           <div class="panel-body bio-graph-info">
             <h1 v-if="!editMode">Bio Graph</h1>
+            <p v-if="error" style="color: red">{{ error }}</p>
             <h1 v-if="editMode">
-              <p v-if="error" style="color: red">{{ error }}</p>
               <a @click="update" href="#">
                 <i class="fa fa-edit"></i> <span>Update</span>
               </a>
