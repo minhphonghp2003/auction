@@ -37,16 +37,16 @@ onMounted(async () => {
     countDown(mostWatched.value.date_end)
 
   }
-  product.value = product.value.splice(0,9)
+  product.value = product.value.slice(0,9)
 });
 
 let renderMost = () => {
   let sortedProduct = JSON.parse(JSON.stringify(subproduct.value));
   sortedProduct.sort(compareNumbers);
-  sortedProduct.slice(0, sortedProduct.length / 2);
+  
   section.value = "most";
   mostWatched.value = sortedProduct[0];
-  product.value = sortedProduct
+  product.value =sortedProduct.slice(0,6)
   if(mostWatched.value){
 
     let dateEnd = mostWatched.value.date_end.split("-");
@@ -57,7 +57,7 @@ let renderMost = () => {
 
 let renderNew = () => {
   product.value = JSON.parse(JSON.stringify(subproduct.value));
-  product.value = product.value.splice(0,9)
+  product.value = product.value.slice(0,8)
   section.value = "new";
 };
 let done = () => {
