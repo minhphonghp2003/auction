@@ -1,6 +1,16 @@
 <script setup>
+
+import { ref } from "vue";
+import { useRoute} from "vue-router";
+let route = useRoute()
+let id = ref(route.params)
 </script>
 
 <template>
-auction detail
+{{id}}
+
 </template>
+
+<style scoped>
+
+</style>

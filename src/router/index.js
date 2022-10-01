@@ -58,7 +58,7 @@ const router = createRouter({
       component: AuctionView
     },
     {
-      path: '/auctionDetail',
+      path: '/auctionDetail/:pid',
       name: 'auctiondetail',
       component: AuctionDetailView
     },

@@ -3,20 +3,32 @@
 import axios from "axios";
 import { useCookies } from "vue3-cookies";
 import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
 let inside = ref(false);
+let uploading = ref(false);
 const emit = defineEmits(["toggleAddP"]);
+let router = useRouter();
 let { cookies } = useCookies();
 let token = ref(cookies.get("token"));
-let sku = ref("");
-let name = ref("");
-let price = ref("");
-let category = ref("");
-let description = ref("");
-let date_end = ref("");
-let condition = ref("");
-let min_increase = ref("");
-let max_increase = ref("");
 let images = ref([]);
+let error = ref("");
+let categories = ref([]);
+let product_fields = [
+  "sku",
+  "name",
+  "price",
+  "category",
+  "description",
+  "date_end",
+  "condition",
+  "min_increase",
+  "max_increase",
+];
+let product = ref({});
+
+product_fields.forEach((f) => {
+  product.value[f] = "";
+});
 
 let toggleView = () => {
   if (!inside.value) {
@@ -25,12 +37,56 @@ let toggleView = () => {
   inside.value = false;
 };
 
-let add = () => {
-  let imgs = images.value.files
-  for (let index in imgs) {
-    images.value[index]= URL.createObjectURL(imgs[index])
+onMounted(async () => {
+  categories.value = (
+    await axios.get("https://ecommerce-r6l7.onrender.com/product/category")
+  ).data;
+});
+
+let checkInput = () => {
+  if (
+    Object.values(product.value).includes("") ||
+    images.value.files.length == 0
+  ) {
+    error.value = "Please fill in all sections and at least 1 product image";
+    return true;
   }
-  console.log(images.value);
+  error.value = "";
+  return false;
+};
+
+let add = async () => {
+  if (checkInput()) {
+    return;
+  }
+  let formData = new FormData();
+
+  for (let key in product.value) {
+    formData.append(key, product.value[key]);
+  }
+
+  for (let i = 0; i < images.value.files.length; i++) {
+    formData.append("product_images", images.value.files[i]);
+  }
+
+  try {
+    uploading.value = true;
+    let p_id = (
+      await axios.post(
+        "https://ecommerce-r6l7.onrender.com/product/",
+        formData,
+        {
+          headers: {
+            token: token.value,
+          },
+        }
+      )
+    ).data.pid;
+    router.push({ name: "auctiondetail", params: { pid: p_id } });
+  } catch (err) {
+    uploading.value = false;
+    error.value = "Sorry! Something went wrong";
+  }
 };
 </script>
 <template>
@@ -48,18 +104,19 @@ let add = () => {
         >
           <div class="row tm-edit-product-row">
             <div class="col-xl-6 col-lg-6 col-md-12">
+              <p v-if="error" style="color: yellow">{{ error }}</p>
               <div class="form-group mb-3">
                 <label for="name">Sku </label>
                 <input
                   type="text"
-                  v-model="sku"
+                  v-model="product.sku"
                   class="form-control validate"
                   required
                 />
                 <label for="name">Product Name </label>
                 <input
                   type="text"
-                  v-model="name"
+                  v-model="product.name"
                   class="form-control validate"
                   required
                 />
@@ -67,13 +124,13 @@ let add = () => {
               <div class="form-group mb-3">
                 <label for="description"
                   >Description
-                  <span style="color: red"
+                  <span style="color: yellow"
                     >(Be careful, you will not be able to update your product
                     when submitted)</span
                   ></label
                 >
                 <textarea
-                  v-model="description"
+                  v-model="product.description"
                   class="form-control validate"
                   rows="3"
                   required
@@ -82,21 +139,20 @@ let add = () => {
               <div class="form-group mb-3">
                 <label for="category">Category</label>
                 <select
-                  v-model="category"
+                  v-model="product.category"
                   class="custom-select tm-select-accounts"
                   id="category"
                 >
-                  <option selected>Select category</option>
-                  <option value="1">New Arrival</option>
-                  <option value="2">Most Popular</option>
-                  <option value="3">Trending</option>
+                  <option v-for="c of categories" :key="c" :value="c.id">
+                    {{ c.cate }}
+                  </option>
                 </select>
               </div>
               <div class="row">
                 <div class="form-group mb-3 col-xs-12 col-sm-6">
                   <label for="expire_date">End date </label>
                   <input
-                    v-model="date_end"
+                    v-model="product.date_end"
                     type="date"
                     class="form-control validate"
                     data-large-mode="true"
@@ -105,7 +161,7 @@ let add = () => {
                 <div class="form-group mb-3 col-xs-12 col-sm-6">
                   <label for="stock">Price </label>
                   <input
-                    v-model="price"
+                    v-model="product.price"
                     type="number"
                     min="0"
                     step="any"
@@ -116,11 +172,12 @@ let add = () => {
               </div>
             </div>
             <div class="col-xl-6 col-lg-6 col-md-12 mx-auto mb-4">
-              <div class="tm-product-img-dummy mx-auto">
-                <i
-                  class="fas fa-cloud-upload-alt tm-upload-icon"
-                  onclick="document.getElementById('fileInput').click();"
-                ></i>
+              <div
+                style="cursor: pointer"
+                onclick="document.getElementById('fileInput').click();"
+                class="tm-product-img-dummy mx-auto"
+              >
+                <i class="fas fa-cloud-upload-alt tm-upload-icon"></i>
               </div>
               <div class="custom-file mt-3 mb-3">
                 <input
@@ -134,14 +191,14 @@ let add = () => {
                 <div class="form-group mb-3 col-xs-12 col-sm-6">
                   <label for="stock">Condition </label>
                   <input
-                    v-model="condition"
+                    v-model="product.condition"
                     type="text"
                     class="form-control validate"
                     required
                   />
                   <label for="stock">Min increase </label>
                   <input
-                    v-model="min_increase"
+                    v-model="product.min_increase"
                     type="number"
                     min="0"
                     step="any"
@@ -150,7 +207,7 @@ let add = () => {
                   />
                   <label for="stock">Max increase </label>
                   <input
-                    v-model="max_increase"
+                    v-model="product.max_increase"
                     type="number"
                     min="0"
                     step="any"
@@ -161,7 +218,7 @@ let add = () => {
               </div>
             </div>
 
-            <div class="col-12">
+            <div v-if="!uploading" class="col-12">
               <button
                 @click="add"
                 type="submit"
@@ -169,6 +226,9 @@ let add = () => {
               >
                 Add Product Now
               </button>
+            </div>
+            <div v-if="uploading" class="spinner-border" role="status">
+              <span class="sr-only">Loading...</span>
             </div>
           </div>
         </div>
