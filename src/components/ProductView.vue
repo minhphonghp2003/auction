@@ -1,7 +1,12 @@
 
 <script setup>
+import { useRouter } from "vue-router";
 let props = defineProps(["product"]);
 
+let router = useRouter();
+let goToProduct = (pid) => {
+  router.push({ name: "auctiondetail", params: { pid: pid } });
+};
 </script>
 
 <template>
@@ -15,8 +20,8 @@ let props = defineProps(["product"]);
         >
           <div class="product__item">
             <div class="product__item__pic">
-              <img v-bind:src="'data:image/jpeg;base64,'+p.image" />
-              <span  class="label" :class="{ pending: p.status == 'pending' }">
+              <img v-bind:src="'data:image/jpeg;base64,' + p.image" />
+              <span class="label" :class="{ pending: p.status == 'pending' }">
                 {{ p.status }}
               </span>
               <ul class="product__hover">
@@ -29,11 +34,17 @@ let props = defineProps(["product"]);
             </div>
             <div class="product__item__text">
               <h6>{{ p.name }}</h6>
-              <a v-if="p.status == 'active'" href="#" class="add-cart"> Start Bidding</a>
+              <a
+                v-if="p.status == 'active'"
+                href="#"
+                @click="goToProduct(p.id)"
+                class="add-cart"
+              >
+                Start Bidding</a
+              >
               <a v-else class="add-cart">Session not started yet</a>
               <div class="rating">Sku: {{ p.sku }}</div>
               <h5>{{ p.date_end }}</h5>
-              
             </div>
           </div>
         </div>
