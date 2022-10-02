@@ -8,7 +8,7 @@ let loading = ref(true)
 let myData = ref({})
 let { cookies } = useCookies();
 let token = ref(cookies.get("token"));
-
+let chatbox = ref(null)
 let props = defineProps(['id'])
 onMounted(async () => {
     try {
@@ -21,7 +21,6 @@ onMounted(async () => {
                 })
             ).data;
         }
-        console.log(myData.value);
         comments.value = (await axios.get(`https://ecommerce-r6l7.onrender.com/comment?product_id=${props.id}`)).data
         loading.value = false
 
@@ -40,7 +39,7 @@ onMounted(async () => {
         <rect x="0" y="72" rx="3" ry="3" width="380" height="6" />
         <rect x="0" y="88" rx="3" ry="3" width="178" height="6" />
     </ContentLoader>
-    <section onhover="document.scrollTo(0, document.querySelector(''.msger').scrollHeight);" v-if="!loading" class="msger">
+    <section ref="chatbox" v-if="!loading" class="msger">
         <header class="msger-header">
             <div class="msger-header-title">
                 <i class="fas fa-comment-alt"></i> Chat with others
@@ -50,7 +49,7 @@ onMounted(async () => {
 
         <main class="msger-chat">
             <div v-for="c in comments" :key="c" class="msg left-msg">
-                <div v-if="c.uid != myData.id" class="msg-bubble">
+                <div v-if="c.uid != myData.user.id" class="msg-bubble">
                     <div class="msg-info">
                         <div class="msg-info-name">{{c.fullname}}</div>
                         <div class="msg-info-time">{{c.date}}</div>
@@ -66,7 +65,7 @@ onMounted(async () => {
 
             <div  v-for="c in comments" :key="c" class="msg right-msg">
 
-                <div v-if="c.uid == myData.id" lass="msg-bubble">
+                <div   class="msg-bubble">
                     <div class="msg-info">
                         <div class="msg-info-name">{{c.fullname}}</div>
                         <div class="msg-info-time">{{c.date}}</div>
