@@ -154,7 +154,7 @@ let swapComp = () => {
           class="wrap-input100 validate-input m-b-23"
           data-validate="Username is reauired"
         >
-          <span class="label-input100">Phone</span>
+          <span id="phone" class="label-input100">Phone</span>
           <input
             style="-moz-appearance: textfield"
             class="input100"
@@ -170,7 +170,7 @@ let swapComp = () => {
           class="wrap-input100 validate-input m-b-23"
           data-validate="Username is reauired"
         >
-          <span class="label-input100">Email</span>
+          <span  class="label-input100">Email</span>
           <input
             class="input100"
             type="email"
@@ -229,4 +229,15 @@ let swapComp = () => {
 @import "../../assets/auth/vendor/animsition/css/animsition.min.css";
 @import "../../assets/auth/vendor/select2/select2.min.css";
 @import "../../assets/auth/vendor/daterangepicker/daterangepicker.css";
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
 </style>

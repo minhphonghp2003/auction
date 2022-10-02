@@ -1,6 +1,9 @@
 
 <script setup>
-defineProps([
+  import {useRouter} from 'vue-router'
+import router from '../../router';
+let props = defineProps([
+  'id',
   "b_count",
   "name",
   "category",
@@ -10,6 +13,9 @@ defineProps([
   "minutes",
   "seconds",
 ]);
+let bidnow = ()=>{
+  router.push({name:'auctiondetail',params:{pid:props.id}})
+}
 </script>
 
 <template>
@@ -59,7 +65,7 @@ defineProps([
                 <h5>Seconds</h5>
               </div>
             </div>
-            <a href="#" class="primary-btn">Bid now</a>
+            <a href="#" @click="bidnow" class="primary-btn">Bid now</a>
           </div>
         </div>
       </div>
