@@ -45,7 +45,8 @@ let login = async() =>{
 
     cookies.set('token', res.token)
     submit.value = true
-    router.go(-1)
+    router.push({ name: 'home' })
+          .then(() => { router.go() })
   } catch (error) {
     submit.value = true
    nouser.value = true

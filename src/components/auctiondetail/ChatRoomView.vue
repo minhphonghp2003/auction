@@ -46,11 +46,12 @@ onMounted(async () => {
     
 })
 
+
 let socketFunc = () => {
     socket.on('showmsg', message => {
-        let isMycmt =1
-        if(!myData.value || myData.value.user.id !== message.sender ){
-            isMycmt = 0
+        let isMycmt = 0
+        if(token.value && myData.value.user.id == message.uid){
+            isMycmt =1
         }
         comments.value.push({
             fullname:message.fullname,
@@ -75,7 +76,8 @@ let chat = async () => {
                 token: token.value
             }
         })
-        message.sender = myData.value.user.id,
+        message.uid = myData.value.user.id,
+        message.fullname = myData.value.user.fullname,
         socket.emit('newmsg', message)
         msg.value = ''
     } catch (error) {
@@ -109,8 +111,8 @@ let chat = async () => {
         </header>
 
         <main class="msger-chat">
-            <div v-for="c in comments" :key="comments" class="msg left-msg">
-                <div v-if="c.myCmt != 1" class="msg-bubble">
+            <div v-for="c in comments" :key="comments" class="msg " :class="{left:c.myCmt==0,right:c.myCmt==1}">
+                <div  class="msg-bubble">
                     <div class="msg-info">
                         <div class="msg-info-name">{{c.fullname}}</div>
                         <div class="msg-info-time">{{c.date}}</div>
@@ -124,19 +126,6 @@ let chat = async () => {
             </div>
 
 
-            <div v-for="c in comments" :key="comments" class="msg right-msg">
-
-                <div v-if="c.myCmt == 1" class="msg-bubble">
-                    <div class="msg-info">
-                        <div class="msg-info-name">Me</div>
-                        <div class="msg-info-time">{{c.date}}</div>
-                    </div>
-
-                    <div class="msg-text">
-                        {{c.content}}
-                    </div>
-                </div>
-            </div>
         </main>
 
         <div v-on:keyup.enter="chat" class="msger-inputarea">
@@ -262,20 +251,20 @@ body {
     font-size: 0.85em;
 }
 
-.left-msg .msg-bubble {
+.left .msg-bubble {
     border-bottom-left-radius: 0;
 }
 
-.right-msg {
+.right {
     flex-direction: row-reverse;
 }
 
-.right-msg .msg-bubble {
+.right .msg-bubble {
     background-color: #579ffb;
     border-bottom-right-radius: 0;
 }
 
-.right-msg .msg-img {
+.right .msg-img {
     margin: 0 0 0 10px;
 }
 
