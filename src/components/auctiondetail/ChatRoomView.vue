@@ -1,7 +1,9 @@
 <script setup>
 import axios from 'axios';
+import { io } from 'socket.io-client'
 import { onMounted, ref } from 'vue'
 import { ContentLoader } from 'vue-content-loader'
+import { useRoute, useRouter } from 'vue-router';
 import { useCookies } from "vue3-cookies";
 let comments = ref([])
 let loading = ref(true)
@@ -10,8 +12,18 @@ let { cookies } = useCookies();
 let token = ref(cookies.get("token"));
 let chatbox = ref(null)
 let props = defineProps(['id'])
+let msg = ref('')
+let route = useRoute()
+let router = useRouter()
+let err = ref('')
+
+const socket = io("http://localhost:4000");
+
+
 onMounted(async () => {
     try {
+        comments.value = (await axios.get(`https://ecommerce-r6l7.onrender.com/comment?product_id=${props.id}`)).data
+
         if (token.value) {
             myData.value = (
                 await axios.get("https://ecommerce-r6l7.onrender.com/user/mydata", {
@@ -20,15 +32,64 @@ onMounted(async () => {
                     },
                 })
             ).data;
+            comments.value.forEach(c => {
+                if (c.uid == myData.value.user.id) {
+                    c.myCmt = 1
+                }
+            });
         }
-        comments.value = (await axios.get(`https://ecommerce-r6l7.onrender.com/comment?product_id=${props.id}`)).data
         loading.value = false
 
     } catch (error) {
         console.log(error);
     }
-
+    
 })
+
+let socketFunc = () => {
+    socket.on('showmsg', message => {
+        let isMycmt =1
+        if(!myData.value || myData.value.user.id !== message.sender ){
+            isMycmt = 0
+        }
+        comments.value.push({
+            fullname:message.fullname,
+            content: message.content,
+            myCmt: isMycmt,
+            date: (new Date()).toString().split(' ').slice(0, 5).join(' ')
+        })
+    })
+}
+
+socketFunc()
+
+let chat = async () => {
+    try {
+        let message = {
+            content: msg.value,
+            rate: 0,
+            product_id: route.params.pid
+        }
+        await axios.post('https://ecommerce-r6l7.onrender.com/comment', message, {
+            headers: {
+                token: token.value
+            }
+        })
+        message.sender = myData.value.user.id,
+        socket.emit('newmsg', message)
+        msg.value = ''
+    } catch (error) {
+        if(!token.value){
+            router.push({name:'login'})
+
+        }
+        err.value = 'Something went wrong'
+    }
+
+
+}
+
+
 </script>
 
 <template>
@@ -39,7 +100,7 @@ onMounted(async () => {
         <rect x="0" y="72" rx="3" ry="3" width="380" height="6" />
         <rect x="0" y="88" rx="3" ry="3" width="178" height="6" />
     </ContentLoader>
-    <section ref="chatbox" v-if="!loading" class="msger">
+    <section v-if="!loading" class="msger">
         <header class="msger-header">
             <div class="msger-header-title">
                 <i class="fas fa-comment-alt"></i> Chat with others
@@ -48,8 +109,8 @@ onMounted(async () => {
         </header>
 
         <main class="msger-chat">
-            <div v-for="c in comments" :key="c" class="msg left-msg">
-                <div v-if="c.uid != myData.user.id" class="msg-bubble">
+            <div v-for="c in comments" :key="comments" class="msg left-msg">
+                <div v-if="c.myCmt != 1" class="msg-bubble">
                     <div class="msg-info">
                         <div class="msg-info-name">{{c.fullname}}</div>
                         <div class="msg-info-time">{{c.date}}</div>
@@ -63,25 +124,25 @@ onMounted(async () => {
             </div>
 
 
-            <div  v-for="c in comments" :key="c" class="msg right-msg">
+            <div v-for="c in comments" :key="comments" class="msg right-msg">
 
-                <div   class="msg-bubble">
+                <div v-if="c.myCmt == 1" class="msg-bubble">
                     <div class="msg-info">
-                        <div class="msg-info-name">{{c.fullname}}</div>
+                        <div class="msg-info-name">Me</div>
                         <div class="msg-info-time">{{c.date}}</div>
                     </div>
 
                     <div class="msg-text">
-                       {{c.content}}
+                        {{c.content}}
                     </div>
                 </div>
             </div>
         </main>
 
-        <form class="msger-inputarea">
-            <input type="text" class="msger-input" placeholder="Enter your message...">
-            <button type="submit" class="msger-send-btn">Send</button>
-        </form>
+        <div v-on:keyup.enter="chat" class="msger-inputarea">
+            <input type="text" class="msger-input" v-model="msg" placeholder="Enter your message...">
+            <button type="submit" @click="chat" class="msger-send-btn">Send</button>
+        </div>
     </section>
 
 </template>
@@ -178,7 +239,8 @@ body {
 }
 
 .msg-bubble {
-    max-width: 450px;
+    max-width: 50%;
+    line-break: anywhere;
     padding: 15px;
     border-radius: 15px;
     background: var(--left-msg-bg);

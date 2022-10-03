@@ -1,11 +1,13 @@
 <script setup>
 import { onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { Buffer } from "buffer";
+import { useCookies } from "vue3-cookies";
 import axios from "axios";
 import ChatRoomView from "../components/auctiondetail/ChatRoomView.vue";
 import BidderListView from "../components/auctiondetail/BidderListView.vue";
 let route = useRoute();
+let router = useRouter();
 let id = ref(route.params);
 let product = ref({});
 let loading = ref(true);
@@ -13,8 +15,10 @@ let mainImg = ref("");
 let user_bid = ref();
 let error = ref("");
 let section = ref('desc')
-
+let related = ref([])
 let pid = route.params.pid;
+let { cookies } = useCookies();
+let token = ref(cookies.get("token"));
 
 let buffer2b64 = (buffer) => {
   return Buffer.from(buffer).toString("base64");
@@ -67,6 +71,9 @@ onMounted(async () => {
 
 
 let bid = () => {
+  if(!token.value){
+    router.push({name:'login'})
+  }
   error.value = "";
   let min = product.value.prod.price + product.value.prod.min_increase;
   let max = product.value.prod.price + product.value.prod.max_increase;
@@ -75,6 +82,7 @@ let bid = () => {
     return;
   }
   product.value.prod.price += user_bid.value;
+  user_bid.value += min
 };
 
 let countDown = (countDownDate) => {
@@ -96,6 +104,11 @@ let countDown = (countDownDate) => {
   }, 1000);
 
 };
+
+
+let userView = () =>{
+  router.push({name:'user',params:{id:product.value.prod.seller}})
+}
 
 </script>
 
@@ -165,7 +178,7 @@ let countDown = (countDownDate) => {
               <div class="product__details__last__option">
                 <h5><span>More information</span></h5>
                 <ul>
-                  <li><span>Seller:</span> {{product.seller_name}}</li>
+                  <li><span>Seller:</span><a @click="userView" style="cursor: pointer">{{product.seller_name}}</a> </li>
                   <li><span>SKU:</span> {{product.prod.sku}}</li>
                   <li><span>Categories:</span> {{product.prod.cate}}</li>
                 </ul>

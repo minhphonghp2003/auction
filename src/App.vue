@@ -15,26 +15,43 @@ let fullname = ref("");
 let userFetching = ref(false)
 
 let login = async () => {
+  if (token.value) {
+    userFetching.value = true
+    try {
+      fullname.value = (
+        await axios.get("https://ecommerce-r6l7.onrender.com/user/mydata", {
+          headers: {
+            token: token.value,
+          },
+        })
+      ).data.user.fullname;
+      userFetching.value = false
 
-    router.push({name:'login'})
+    } catch (error) {
+      userFetching.value = false
+    }
+  }
+  else {
+    router.push({ name: 'login' })
+  }
 };
 
-onMounted(async()=>{
+onMounted(async () => {
   if (token.value) {
-  userFetching.value = true
-  try {
-    fullname.value = (
-      await axios.get("https://ecommerce-r6l7.onrender.com/user/mydata", {
-        headers: {
-          token: token.value,
-        },
-      })
-    ).data.user.fullname;
-  userFetching.value =false 
-    
-  } catch (error) {
-   userFetching.value = false 
-  }
+    userFetching.value = true
+    try {
+      fullname.value = (
+        await axios.get("https://ecommerce-r6l7.onrender.com/user/mydata", {
+          headers: {
+            token: token.value,
+          },
+        })
+      ).data.user.fullname;
+      userFetching.value = false
+
+    } catch (error) {
+      userFetching.value = false
+    }
   }
 })
 
@@ -59,13 +76,9 @@ onMounted(async()=>{
       </div>
     </div>
     <div class="offcanvas__nav__option">
-      <a href="#" class="search-switch"
-        ><img src="/src/assets/img/icon/search.png" alt=""
-      /></a>
+      <a href="#" class="search-switch"><img src="/src/assets/img/icon/search.png" alt="" /></a>
       <a href="#"><img src="/src/assets/img/icon/heart.png" alt="" /></a>
-      <a href="#"
-        ><img src="/src/assets/img/icon/cart.png" alt="" /> <span>0</span></a
-      >
+      <a href="#"><img src="/src/assets/img/icon/cart.png" alt="" /> <span>0</span></a>
       <div class="price">$0.00</div>
     </div>
     <div id="mobile-menu-wrap"></div>
@@ -88,20 +101,10 @@ onMounted(async()=>{
           <div class="col-lg-6 col-md-5">
             <div class="header__top__right">
               <div class="header__top__links">
-                <a
-                style="cursor:pointer; color:cyan"
-                  :key="fullname"
-                  v-if="!fullname && !userFetching"
-                 @click="login" 
-                  >Sign in</a
-                >
-                <router-link
-                  style="color:cyan" 
-                  :key="fullname"
-                  v-if="fullname && !userFetching"
-                  :to="{ name: 'profile' }"
-                  >{{ fullname }}</router-link
-                >
+                <a style="cursor:pointer; color:cyan" :key="fullname" v-if="!fullname && !userFetching"
+                  @click="login">Sign in</a>
+                <router-link style="color:cyan" :key="fullname" v-if="fullname && !userFetching"
+                  :to="{ name: 'profile' }">{{ fullname }}</router-link>
                 <router-link :to="{ name: 'faq' }">FAQ</router-link>
               </div>
               <div class="header__top__hover">
@@ -120,9 +123,7 @@ onMounted(async()=>{
       <div class="row">
         <div class="col-lg-3 col-md-3">
           <div class="header__logo">
-            <router-link :to="{ name: 'home' }"
-              ><img src="/src/assets/img/icon/Bidthu.png" alt=""
-            /></router-link>
+            <router-link :to="{ name: 'home' }"><img src="/src/assets/img/icon/Bidthu.png" alt="" /></router-link>
           </div>
         </div>
         <div class="col-lg-6 col-md-6">
@@ -145,12 +146,10 @@ onMounted(async()=>{
         </div>
         <div class="col-lg-3 col-md-3">
           <div class="header__nav__option">
-            <a href="#" @click="opensearch" class="search-switch"
-              ><img src="/src/assets/img/icon/search.png" alt=""
-            /></a>
+            <a href="#" @click="opensearch" class="search-switch"><img src="/src/assets/img/icon/search.png"
+                alt="" /></a>
             <a href="#"><img src="/src/assets/img/icon/heart.png" alt="" /></a>
-            <router-link :to="{ name: 'cart' }"
-              ><img src="/src/assets/img/icon/cart.png" alt="" /> <span>0</span>
+            <router-link :to="{ name: 'cart' }"><img src="/src/assets/img/icon/cart.png" alt="" /> <span>0</span>
             </router-link>
             <div class="price">$0.00</div>
           </div>
@@ -178,15 +177,13 @@ onMounted(async()=>{
         <div class="col-lg-3 col-md-6 col-sm-6">
           <div class="footer__about">
             <div class="footer__logo">
-              <a href="#"
-                ><img src="/src/assets/img/icon/Bidthu.png" alt=""
-              /></a>
+              <a href="#"><img src="/src/assets/img/icon/Bidthu.png" alt="" /></a>
             </div>
             <p>
               The customer is at the heart of our unique business model, which
               includes design.
             </p>
-         
+
           </div>
         </div>
         <div class="col-lg-2 offset-lg-1 col-md-3 col-sm-6">
@@ -238,11 +235,7 @@ onMounted(async()=>{
               {{ year }}
               All rights reserved | This template is made with
               <i class="fa fa-heart-o" aria-hidden="true"></i> by
-              <a
-                href="https://www.facebook.com/profile.php?id=100068404994823"
-                target="_blank"
-                >Nguyen Minh</a
-              >
+              <a href="https://www.facebook.com/profile.php?id=100068404994823" target="_blank">Nguyen Minh</a>
             </p>
             <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
           </div>

@@ -9,10 +9,10 @@ import './assets/css/nice-select.css'
 import './assets/css/owl.carousel.min.css'
 import './assets/css/slicknav.min.css'
 import './assets/css/style.css'
-// import './assets/css/style.css.map'
-// // 
 
 const app = createApp(App)
+
+
 app.use(router)
 
 app.mount('#app')
