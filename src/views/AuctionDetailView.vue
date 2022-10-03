@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { io } from 'socket.io-client'
 import { Buffer } from "buffer";
 import { useCookies } from "vue3-cookies";
 import axios from "axios";
@@ -17,8 +18,15 @@ let error = ref("");
 let section = ref('desc')
 let related = ref([])
 let pid = route.params.pid;
+let isBidding = ref(false)
 let { cookies } = useCookies();
 let token = ref(cookies.get("token"));
+const socket = io("http://localhost:4000");
+
+socket.on('setnewprice', (bid) => {
+  user_bid.value = bid.user_bid
+  product.value.prod.price = bid.price
+})
 
 let buffer2b64 = (buffer) => {
   return Buffer.from(buffer).toString("base64");
@@ -70,20 +78,57 @@ onMounted(async () => {
 
 
 
-let bid = () => {
-  if(!token.value){
-    router.push({name:'login'})
+let bid = async () => {
+  if (!token.value) {
+    router.push({ name: 'login' })
   }
+  isBidding.value = true
   error.value = "";
   let min = product.value.prod.price + product.value.prod.min_increase;
   let max = product.value.prod.price + product.value.prod.max_increase;
   if (user_bid.value < min || user_bid.value > max) {
     error.value = "Please bid in valid range";
+    isBidding.value = false
     return;
   }
-  product.value.prod.price += user_bid.value;
-  user_bid.value += min
+  try {
+    await axios.post("https://ecommerce-r6l7.onrender.com/product/bid", { product_id: product.value.prod.product_id, price: product.value.prod.price + user_bid.value },
+      {
+        headers: {
+          token: token.value
+        }
+      }
+    )
+    product.value.prod.price += user_bid.value;
+    user_bid.value += min
+    socket.emit('newbid', { user_bid: user_bid.value, price: product.value.prod.price })
+    isBidding.value = false
+
+  } catch (err) {
+    if (err.response.data.includes("duplicate")) {
+      try {
+        await axios.put("https://ecommerce-r6l7.onrender.com/product/bid", { product_id: product.value.prod.product_id, price: product.value.prod.price + user_bid.value },
+          {
+            headers: {
+              token: token.value
+            }
+          }
+        )
+        product.value.prod.price += user_bid.value;
+        user_bid.value += min
+        socket.emit('newbid', { user_bid: user_bid.value, price: product.value.prod.price })
+
+        isBidding.value = false
+      } catch (erro) {
+        isBidding.value = false
+        console.log(erro);
+      }
+    }
+
+  }
 };
+
+
 
 let countDown = (countDownDate) => {
 
@@ -106,8 +151,8 @@ let countDown = (countDownDate) => {
 };
 
 
-let userView = () =>{
-  router.push({name:'user',params:{id:product.value.prod.seller}})
+let userView = () => {
+  router.push({ name: 'user', params: { id: product.value.prod.seller } })
 }
 
 </script>
@@ -170,7 +215,7 @@ let userView = () =>{
                     <input type="number" :min="product.prod.min_increase + product.prod.price" v-model="user_bid" />
                   </div>
                 </div>
-                <a style="cursor: pointer; color: white" @click="bid" class="primary-btn">Bid</a>
+                <a v-if="!isBidding" style="cursor: pointer; color: white" @click="bid" class="primary-btn">Bid</a>
               </div>
               <div class="product__details__btns__option">
                 <a href="#"><i class="fa fa-heart"></i> add to wishlist</a>
@@ -219,7 +264,7 @@ let userView = () =>{
                   <div class="product__details__tab__content">
 
                     <div class="product__details__tab__content__item">
-                      <ChatRoomView :id="product.prod.product_id" ></ChatRoomView>
+                      <ChatRoomView :id="product.prod.product_id"></ChatRoomView>
                     </div>
 
                   </div>
@@ -230,7 +275,7 @@ let userView = () =>{
                   <div class="product__details__tab__content">
 
                     <div class="product__details__tab__content__item">
-                      <BidderListView :bidders="product.bidders" ></BidderListView>
+                      <BidderListView :bidders="product.bidders" :key="product.bidders"></BidderListView>
                     </div>
 
                   </div>

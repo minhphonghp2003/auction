@@ -1,7 +1,7 @@
 <script setup>
 import axios from 'axios';
 import { io } from 'socket.io-client'
-import { onMounted, ref } from 'vue'
+import { onMounted, onUpdated, ref } from 'vue'
 import { ContentLoader } from 'vue-content-loader'
 import { useRoute, useRouter } from 'vue-router';
 import { useCookies } from "vue3-cookies";
@@ -18,8 +18,6 @@ let router = useRouter()
 let err = ref('')
 
 const socket = io("http://localhost:4000");
-
-
 onMounted(async () => {
     try {
         comments.value = (await axios.get(`https://ecommerce-r6l7.onrender.com/comment?product_id=${props.id}`)).data
@@ -43,18 +41,18 @@ onMounted(async () => {
     } catch (error) {
         console.log(error);
     }
-    
+
 })
 
 
 let socketFunc = () => {
     socket.on('showmsg', message => {
         let isMycmt = 0
-        if(token.value && myData.value.user.id == message.uid){
-            isMycmt =1
+        if (token.value && myData.value.user.id == message.uid) {
+            isMycmt = 1
         }
         comments.value.push({
-            fullname:message.fullname,
+            fullname: message.fullname,
             content: message.content,
             myCmt: isMycmt,
             date: (new Date()).toString().split(' ').slice(0, 5).join(' ')
@@ -77,12 +75,12 @@ let chat = async () => {
             }
         })
         message.uid = myData.value.user.id,
-        message.fullname = myData.value.user.fullname,
-        socket.emit('newmsg', message)
+            message.fullname = myData.value.user.fullname,
+            socket.emit('newmsg', message)
         msg.value = ''
     } catch (error) {
-        if(!token.value){
-            router.push({name:'login'})
+        if (!token.value) {
+            router.push({ name: 'login' })
 
         }
         err.value = 'Something went wrong'
@@ -90,6 +88,9 @@ let chat = async () => {
 
 
 }
+
+
+
 
 
 </script>
@@ -108,27 +109,28 @@ let chat = async () => {
                 <i class="fas fa-comment-alt"></i> Chat with others
             </div>
 
+
         </header>
 
-        <main class="msger-chat">
+        <main class="msger-chat" >
             <div v-for="c in comments" :key="comments" class="msg " :class="{left:c.myCmt==0,right:c.myCmt==1}">
-                <div  class="msg-bubble">
+                <div class="msg-bubble">
                     <div class="msg-info">
                         <div class="msg-info-name">{{c.fullname}}</div>
                         <div class="msg-info-time">{{c.date}}</div>
                     </div>
 
-                    <div class="msg-text">
+                    <div class="msg-text scroll">
                         {{c.content}}
+
                     </div>
                 </div>
-
             </div>
 
 
         </main>
 
-        <div v-on:keyup.enter="chat" class="msger-inputarea">
+        <div  v-on:keyup.enter="chat" class="msger-inputarea ">
             <input type="text" class="msger-input" v-model="msg" placeholder="Enter your message...">
             <button type="submit" @click="chat" class="msger-send-btn">Send</button>
         </div>
@@ -136,6 +138,94 @@ let chat = async () => {
 
 </template>
 <style scoped>
+.arrow-container {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+    position: absolute;
+    bottom: 25px;
+    left: 0;
+    right: 0;
+}
+
+
+
+.arrow-2 {
+    width: 60px;
+    height: 60px;
+    /* background: #00BCD4; */
+    border-radius: 50%;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 1;
+    display: table;
+}
+
+.arrow-2:before {
+    width: 52px;
+    height: 52px;
+    content: "";
+    border: 2px solid #006064;
+    border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+}
+
+.arrow-2 i.fa {
+    font-size: 30px;
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    color: #006064;
+}
+
+/* Custom Animate.css */
+
+.animated.hinge {
+    -webkit-animation-duration: 2s;
+    animation-duration: 2s;
+}
+
+@-webkit-keyframes zoomIn {
+    0% {
+        opacity: 0;
+        -webkit-transform: scale3d(.4, .4, .4);
+        transform: scale3d(.4, .4, .4);
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes zoomIn {
+    0% {
+        opacity: 0;
+        -webkit-transform: scale3d(.4, .4, .4);
+        transform: scale3d(.4, .4, .4);
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+.zoomIn {
+    -webkit-animation-name: zoomIn;
+    animation-name: zoomIn;
+}
+
+
 :root {
     --body-bg: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     --msger-bg: #fff;

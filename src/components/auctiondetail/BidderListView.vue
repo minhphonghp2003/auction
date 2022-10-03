@@ -1,5 +1,6 @@
 <script setup>
 defineProps(['bidders'])
+
 </script>
 <template>
     <div>
@@ -46,12 +47,14 @@ defineProps(['bidders'])
                     </g>
                 </svg>
 
-                <h1 class="leaderboard__title"><span class="leaderboard__title--top">Bidding</span><span
-                        class="leaderboard__title--bottom">Leaderboard</span></h1>
+                <h1 class="leaderboard__title"><span class="leaderboard__title--top">Bidding Leaderboard</span><span
+                        class="leaderboard__title--bottom"> <br> (Reload page to update new leaderboard)</span></h1>
+                        
             </header>
 
             <main class="leaderboard__profiles">
-                <article v-for="b of bidders" :key="b" class="leaderboard__profile">
+                
+                <article v-for="b of bidders" :key="bidders" class="leaderboard__profile">
 
                     <span class="leaderboard__name">{{b.fullname}}</span>
                     <span class="leaderboard__value">{{b.price}}<span></span></span>
@@ -64,7 +67,7 @@ defineProps(['bidders'])
 </template>
 <style scoped lang="scss">
 ::-webkit-scrollbar {
-  width: 10px;
+    width: 10px;
 }
 
 .leaderboard {
