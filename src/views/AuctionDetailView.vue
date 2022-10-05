@@ -1,5 +1,6 @@
 <script setup>
 import { onMounted, ref } from "vue";
+
 import { useRoute, useRouter } from "vue-router";
 import { io } from 'socket.io-client'
 import { Buffer } from "buffer";
@@ -7,6 +8,7 @@ import { useCookies } from "vue3-cookies";
 import axios from "axios";
 import ChatRoomView from "../components/auctiondetail/ChatRoomView.vue";
 import BidderListView from "../components/auctiondetail/BidderListView.vue";
+import ProductView from "../components/ProductView.vue";
 let route = useRoute();
 let router = useRouter();
 let id = ref(route.params);
@@ -52,6 +54,20 @@ const b64toBlob = (b64Data, contentType = "", sliceSize = 512) => {
   return blob;
 };
 
+let getRelated = async (cate) => {
+  let prod = (await axios('https://ecommerce-r6l7.onrender.com/product/all')).data
+  related.value = prod.filter(ele => {
+    return ele.category = cate
+  })
+  related.value = related.value.slice(0, 4)
+  for (let i in related.value) {
+     
+    related.value[i].image = Buffer.from(related.value[i].image).toString("base64");
+
+    related.value[i].date_end = related.value[i].date_end.split("T")[0]
+    }
+}
+
 onMounted(async () => {
   try {
     product.value = (
@@ -73,6 +89,7 @@ onMounted(async () => {
     mainImg.value = product.value.prod.image[0];
     user_bid.value = product.value.prod.price + product.value.prod.min_increase;
     loading.value = false;
+    getRelated(product.value.prod.cate)
   } catch (error) { }
 });
 
@@ -158,6 +175,9 @@ let userView = () => {
 </script>
 
 <template>
+
+
+
   <section v-if="!loading" class="shop-details">
     <div class="product__details__pic">
       <div class="container">
@@ -288,8 +308,14 @@ let userView = () => {
     </div>
   </section>
 
+  <content-loader v-if="loading" viewBox="0 0 476 124" :speed="2" primaryColor="#f3f3f3" secondaryColor="#ecebeb">
+    <rect x="28" y="16" rx="0" ry="0" width="96" height="86" />
+    <rect x="168" y="15" rx="0" ry="0" width="96" height="86" />
+    <rect x="309" y="17" rx="0" ry="0" width="96" height="86" />
+    <rect x="26" y="108" rx="0" ry="0" width="387" height="10" />
+  </content-loader>
   <!-- Related Section Begin -->
-  <section class="related spad">
+  <section v-if="!loading" class="related spad">
     <div class="container">
       <div class="row">
         <div class="col-lg-12">
@@ -297,172 +323,8 @@ let userView = () => {
         </div>
       </div>
       <div class="row">
-        <div class="col-lg-3 col-md-6 col-sm-6 col-sm-6">
-          <div class="product__item">
-            <div class="product__item__pic set-bg" data-setbg="/src/assets/img/product/product-1.jpg">
-              <span class="label">New</span>
-              <ul class="product__hover">
-                <li>
-                  <a href="#"><img src="/src/assets/img/icon/heart.png" alt="" /></a>
-                </li>
-                <li>
-                  <a href="#"><img src="/src/assets/img/icon/compare.png" alt="" />
-                    <span>Compare</span></a>
-                </li>
-                <li>
-                  <a href="#"><img src="/src/assets/img/icon/search.png" alt="" /></a>
-                </li>
-              </ul>
-            </div>
-            <div class="product__item__text">
-              <h6>Piqué Biker Jacket</h6>
-              <a href="#" class="add-cart">+ Add To Cart</a>
-              <div class="rating">
-                <i class="fa fa-star-o"></i>
-                <i class="fa fa-star-o"></i>
-                <i class="fa fa-star-o"></i>
-                <i class="fa fa-star-o"></i>
-                <i class="fa fa-star-o"></i>
-              </div>
-              <h5>$67.24</h5>
-              <div class="product__color__select">
-                <label for="pc-1">
-                  <input type="radio" id="pc-1" />
-                </label>
-                <label class="active black" for="pc-2">
-                  <input type="radio" id="pc-2" />
-                </label>
-                <label class="grey" for="pc-3">
-                  <input type="radio" id="pc-3" />
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-3 col-md-6 col-sm-6 col-sm-6">
-          <div class="product__item">
-            <div class="product__item__pic set-bg" data-setbg="/src/assets/img/product/product-2.jpg">
-              <ul class="product__hover">
-                <li>
-                  <a href="#"><img src="/src/assets/img/icon/heart.png" alt="" /></a>
-                </li>
-                <li>
-                  <a href="#"><img src="/src/assets/img/icon/compare.png" alt="" />
-                    <span>Compare</span></a>
-                </li>
-                <li>
-                  <a href="#"><img src="/src/assets/img/icon/search.png" alt="" /></a>
-                </li>
-              </ul>
-            </div>
-            <div class="product__item__text">
-              <h6>Piqué Biker Jacket</h6>
-              <a href="#" class="add-cart">+ Add To Cart</a>
-              <div class="rating">
-                <i class="fa fa-star-o"></i>
-                <i class="fa fa-star-o"></i>
-                <i class="fa fa-star-o"></i>
-                <i class="fa fa-star-o"></i>
-                <i class="fa fa-star-o"></i>
-              </div>
-              <h5>$67.24</h5>
-              <div class="product__color__select">
-                <label for="pc-4">
-                  <input type="radio" id="pc-4" />
-                </label>
-                <label class="active black" for="pc-5">
-                  <input type="radio" id="pc-5" />
-                </label>
-                <label class="grey" for="pc-6">
-                  <input type="radio" id="pc-6" />
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-3 col-md-6 col-sm-6 col-sm-6">
-          <div class="product__item sale">
-            <div class="product__item__pic set-bg" data-setbg="/src/assets/img/product/product-3.jpg">
-              <span class="label">Sale</span>
-              <ul class="product__hover">
-                <li>
-                  <a href="#"><img src="/src/assets/img/icon/heart.png" alt="" /></a>
-                </li>
-                <li>
-                  <a href="#"><img src="/src/assets/img/icon/compare.png" alt="" />
-                    <span>Compare</span></a>
-                </li>
-                <li>
-                  <a href="#"><img src="/src/assets/img/icon/search.png" alt="" /></a>
-                </li>
-              </ul>
-            </div>
-            <div class="product__item__text">
-              <h6>Multi-pocket Chest Bag</h6>
-              <a href="#" class="add-cart">+ Add To Cart</a>
-              <div class="rating">
-                <i class="fa fa-star"></i>
-                <i class="fa fa-star"></i>
-                <i class="fa fa-star"></i>
-                <i class="fa fa-star"></i>
-                <i class="fa fa-star-o"></i>
-              </div>
-              <h5>$43.48</h5>
-              <div class="product__color__select">
-                <label for="pc-7">
-                  <input type="radio" id="pc-7" />
-                </label>
-                <label class="active black" for="pc-8">
-                  <input type="radio" id="pc-8" />
-                </label>
-                <label class="grey" for="pc-9">
-                  <input type="radio" id="pc-9" />
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-3 col-md-6 col-sm-6 col-sm-6">
-          <div class="product__item">
-            <div class="product__item__pic set-bg" data-setbg="/src/assets/img/product/product-4.jpg">
-              <ul class="product__hover">
-                <li>
-                  <a href="#"><img src="/src/assets/img/icon/heart.png" alt="" /></a>
-                </li>
-                <li>
-                  <a href="#"><img src="/src/assets/img/icon/compare.png" alt="" />
-                    <span>Compare</span></a>
-                </li>
-                <li>
-                  <a href="#"><img src="/src/assets/img/icon/search.png" alt="" /></a>
-                </li>
-              </ul>
-            </div>
-            <div class="product__item__text">
-              <h6>Diagonal Textured Cap</h6>
-              <a href="#" class="add-cart">+ Add To Cart</a>
-              <div class="rating">
-                <i class="fa fa-star-o"></i>
-                <i class="fa fa-star-o"></i>
-                <i class="fa fa-star-o"></i>
-                <i class="fa fa-star-o"></i>
-                <i class="fa fa-star-o"></i>
-              </div>
-              <h5>$60.9</h5>
-              <div class="product__color__select">
-                <label for="pc-10">
-                  <input type="radio" id="pc-10" />
-                </label>
-                <label class="active black" for="pc-11">
-                  <input type="radio" id="pc-11" />
-                </label>
-                <label class="grey" for="pc-12">
-                  <input type="radio" id="pc-12" />
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
+        
+        <ProductView :product="related"></ProductView>
       </div>
     </div>
   </section>
