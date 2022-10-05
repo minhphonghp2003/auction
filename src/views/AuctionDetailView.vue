@@ -138,7 +138,6 @@ let bid = async () => {
         isBidding.value = false
       } catch (erro) {
         isBidding.value = false
-        console.log(erro);
       }
     }
 
