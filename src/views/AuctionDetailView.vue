@@ -9,21 +9,24 @@ import axios from "axios";
 import ChatRoomView from "../components/auctiondetail/ChatRoomView.vue";
 import BidderListView from "../components/auctiondetail/BidderListView.vue";
 import ProductView from "../components/ProductView.vue";
+import UserView from "../components/auctiondetail/UserView.vue";
 let route = useRoute();
 let router = useRouter();
 let id = ref(route.params);
 let product = ref({});
 let loading = ref(true);
 let mainImg = ref("");
+let seller_id = ref('')
 let user_bid = ref();
 let error = ref("");
 let section = ref('desc')
 let related = ref([])
 let pid = route.params.pid;
+let sellerView = ref(false)
 let isBidding = ref(false)
 let { cookies } = useCookies();
 let token = ref(cookies.get("token"));
-const socket = io("http://localhost:4000");
+const socket = io("https://ecommerce-r6l7.onrender.com");
 
 socket.on('setnewprice', (bid) => {
   user_bid.value = bid.user_bid
@@ -61,11 +64,11 @@ let getRelated = async (cate) => {
   })
   related.value = related.value.slice(0, 4)
   for (let i in related.value) {
-     
+
     related.value[i].image = Buffer.from(related.value[i].image).toString("base64");
 
     related.value[i].date_end = related.value[i].date_end.split("T")[0]
-    }
+  }
 }
 
 onMounted(async () => {
@@ -167,17 +170,23 @@ let countDown = (countDownDate) => {
 };
 
 
-let userView = () => {
-  router.push({ name: 'user', params: { id: product.value.prod.seller } })
+let userView = (s_id) => {
+  seller_id.value = s_id
+  sellerView.value = true
+
+}
+
+let exitUser = () =>{
+  sellerView.value = false
 }
 
 </script>
 
 <template>
 
+<UserView @exit-user="exitUser" v-if="sellerView" :uid="seller_id"></UserVIew>
 
-
-  <section v-if="!loading" class="shop-details">
+  <section @click="sellerViewToggle" v-if="!loading" class="shop-details">
     <div class="product__details__pic">
       <div class="container">
         <div class="row" style="margin-top: 120px">
@@ -242,7 +251,7 @@ let userView = () => {
               <div class="product__details__last__option">
                 <h5><span>More information</span></h5>
                 <ul>
-                  <li><span>Seller:</span><a @click="userView" style="cursor: pointer">{{product.seller_name}}</a> </li>
+                  <li><span>Seller:</span><a @click="userView(product.prod.seller)" style="cursor: pointer">{{product.seller_name}}</a> </li>
                   <li><span>SKU:</span> {{product.prod.sku}}</li>
                   <li><span>Categories:</span> {{product.prod.cate}}</li>
                 </ul>
@@ -322,7 +331,7 @@ let userView = () => {
         </div>
       </div>
       <div class="row">
-        
+
         <ProductView :product="related"></ProductView>
       </div>
     </div>

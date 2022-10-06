@@ -5,6 +5,7 @@ import { onMounted, onUpdated, ref } from 'vue'
 import { ContentLoader } from 'vue-content-loader'
 import { useRoute, useRouter } from 'vue-router';
 import { useCookies } from "vue3-cookies";
+import UserView from "./UserView.vue";
 let comments = ref([])
 let loading = ref(true)
 let myData = ref({})
@@ -17,7 +18,7 @@ let route = useRoute()
 let router = useRouter()
 let err = ref('')
 
-const socket = io("http://localhost:4000");
+const socket = io("https://ecommerce-r6l7.onrender.com");
 onMounted(async () => {
     try {
         comments.value = (await axios.get(`https://ecommerce-r6l7.onrender.com/comment?product_id=${props.id}`)).data
@@ -90,12 +91,10 @@ let chat = async () => {
 }
 
 
-
-
-
 </script>
 
 <template>
+
     <ContentLoader v-if="loading" speed={2} viewBox="0 0 400 160" backgroundColor="#f3f3f3" foregroundColor="#ecebeb">
         <rect x="48" y="8" rx="3" ry="3" width="88" height="6" />
         <rect x="48" y="26" rx="3" ry="3" width="52" height="6" />
@@ -116,7 +115,7 @@ let chat = async () => {
             <div v-for="c in comments" :key="comments" class="msg " :class="{left:c.myCmt==0,right:c.myCmt==1}">
                 <div class="msg-bubble">
                     <div class="msg-info">
-                        <div class="msg-info-name">{{c.fullname}}</div>
+                        <div style="cursor: pointer;" @click="showUser(c.uid)" class="msg-info-name">{{c.fullname}} </div>
                         <div class="msg-info-time">{{c.date}}</div>
                     </div>
 
