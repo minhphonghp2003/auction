@@ -15,6 +15,7 @@ onMounted(async () => {
         element.date_end = element.date_end.split("T")[0];
     });
     isDone.value = true
+    console.log(user.value.product);
 })
 
 let toggleUserView = () =>{
