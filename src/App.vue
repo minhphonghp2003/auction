@@ -136,9 +136,6 @@ onMounted(async () => {
                 <router-link :to="{ name: 'auction' }">Auction</router-link>
               </li>
               <li>
-                <router-link :to="{ name: 'blog' }">Blog</router-link>
-              </li>
-              <li>
                 <router-link :to="{ name: 'contact' }">Contacts</router-link>
               </li>
             </ul>

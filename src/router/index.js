@@ -2,8 +2,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import AuctionView from '../views/AuctionView.vue'
 import AuctionDetailView from '../views/AuctionDetailView.vue'
-import BlogView from '../views/BLogView.vue'
-import BlogDetailView from '../views/BlogDetailView.vue'
 import ContactView from '../views/ContactView.vue'
 import ShoppingCartView from '../views/ShoppingCartView.vue'
 import FaqView from '../views/FaqView.vue'
@@ -69,16 +67,7 @@ const router = createRouter({
       name: 'auctiondetail',
       component: AuctionDetailView
     },
-    {
-      path: '/blog',
-      name: 'blog',
-      component: BlogView
-    },
-    {
-      path: '/blogdetail',
-      name: 'blogdetail',
-      component: BlogDetailView
-    },
+    
     {
       path: '/contact',
       name: 'contact',
