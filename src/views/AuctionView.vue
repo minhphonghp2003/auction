@@ -7,6 +7,7 @@ import { ContentLoader } from "vue-content-loader";
 import ProductView from '../components/ProductView.vue';
 
 let product = ref([])
+let filteredProd = ref([])
 let category = ref([])
 let filter = ref()
 let loading = ref(true)
@@ -22,9 +23,8 @@ onMounted(async () => {
             element.image = Buffer.from(element.image).toString("base64");
             element.date_end = element.date_end.split("T")[0];
         });
-        if (category) {
-            product.value.filter(ele => ele.cate = category)
-        }
+
+        filteredProd.value = JSON.parse(JSON.stringify(product.value));
 
         loading.value = false
     } catch (error) {
@@ -32,6 +32,15 @@ onMounted(async () => {
     }
 })
 
+// console.log(choseCate.value);
+onUpdated(() => {
+    if (choseCate.value) {
+        filteredProd.value = JSON.parse(JSON.stringify(product.value.filter((ele) => {
+            return ele.category = choseCate.value
+        })))
+        console.log(filteredProd.value);
+    }
+})
 
 
 </script>
@@ -124,7 +133,7 @@ onMounted(async () => {
                         </div>
                     </div>
                     <div class="row">
-                        <ProductView :product="product"></ProductView>
+                        <ProductView :product="filteredProd"></ProductView>
 
                     </div>
                     <div class="row">
