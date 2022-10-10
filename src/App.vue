@@ -2,12 +2,12 @@
 import axios from "axios";
 import { onBeforeMount, onMounted, onUpdated, ref } from "vue";
 import { getCurrentInstance } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { useCookies } from "vue3-cookies";
 import("../js/main.js");
 
 let year = new Date().getFullYear();
-
+let route = useRoute()
 const router = useRouter();
 const { cookies } = useCookies();
 let token = ref(cookies.get("token"));
@@ -100,8 +100,8 @@ onMounted(async () => {
           </div>
           <div class="col-lg-6 col-md-5">
             <div class="header__top__right">
-              <div class="header__top__links">
-                <a style="cursor:pointer; color:cyan" :key="fullname" v-if="!fullname && !userFetching"
+              <div :key="route.fullPath" class="header__top__links">
+                <a style="cursor:pointer; color:cyan" :key="route.fullPath"  v-if="!fullname && !userFetching"
                   @click="login">Sign in</a>
                 <router-link style="color:cyan" :key="fullname" v-if="fullname && !userFetching"
                   :to="{ name: 'profile' }">{{ fullname }}</router-link>
@@ -156,7 +156,7 @@ onMounted(async () => {
     </div>
   </header>
   <!-- Header Section End -->
-  <router-view />
+  <router-view :key="$route.fullPath"></router-view>
   <!-- Search Begin -->
   <div ref="searchbox" class="search-model">
     <div class="h-100 d-flex align-items-center justify-content-center">

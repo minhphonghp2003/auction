@@ -68,12 +68,13 @@ let add = async () => {
   for (let i = 0; i < images.value.files.length; i++) {
     formData.append("product_images", images.value.files[i]);
   }
+  console.log(formData.get('product_images'));
 
   try {
     uploading.value = true;
     let p_id = (
       await axios.post(
-        "https://ecommerce-r6l7.onrender.com/product/",
+        "https://ecommerce-r6l7.onrender.com/product/", 
         formData,
         {
           headers: {
