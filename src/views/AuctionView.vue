@@ -9,9 +9,9 @@ import ProductView from '../components/ProductView.vue';
 let product = ref([])
 let filteredProd = ref([])
 let category = ref([])
-let filter = ref()
+let filter = ref('None')
 let loading = ref(true)
-let choseCate = ref()
+let choseCate = ref('None')
 let page = ref(1)
 
 onMounted(async () => {
@@ -32,16 +32,14 @@ onMounted(async () => {
     }
 })
 
-// console.log(choseCate.value);
-onUpdated(() => {
-    if (choseCate.value) {
-        filteredProd.value = JSON.parse(JSON.stringify(product.value.filter((ele) => {
-            return ele.category = choseCate.value
-        })))
-        console.log(filteredProd.value);
-    }
-})
+let filtering = ()=>{
+    // console.log(product.value);
+    if(choseCate.value !== "None"){
 
+         
+        console.log(product.value.filter(ele=>console.log(ele)));
+    }
+}
 
 </script>
 
@@ -94,9 +92,44 @@ onUpdated(() => {
 
                                                 </content-loader>
                                                 <select v-else class="nice-scroll" v-model="choseCate">
+                                                    <option> None</option>
                                                     <option v-for="c in category" :key="category">
                                                         {{c.cate}}</option>
                                                 </select>
+
+                                                <i @click="filtering" style="margin-left: 10px;cursor: pointer;"
+                                                    class="fa fa-filter" aria-hidden="true"></i>
+
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="card-heading">
+                                        <a data-toggle="collapse" data-target="#collapseOne">Filter</a>
+                                    </div>
+                                    <div id="collapseOne" class="collapse show" data-parent="#accordionExample">
+                                        <div class="card-body">
+                                            <div class="shop__sidebar__categories">
+                                                <content-loader v-if="loading" viewBox="0 0 476 124" :speed="2"
+                                                    primaryColor="#f3f3f3" secondaryColor="#ecebeb">
+                                                    <rect x="28" y="16" rx="0" ry="0" width="96" height="86" />
+                                                    <rect x="168" y="15" rx="0" ry="0" width="96" height="86" />
+                                                    <rect x="309" y="17" rx="0" ry="0" width="96" height="86" />
+                                                    <rect x="26" y="108" rx="0" ry="0" width="387" height="10" />
+
+                                                </content-loader>
+                                                    <select v-else v-model="filter">
+                                                        <option>None</option>
+                                                        <option>DateEnd</option>
+                                                        <option>Active</option>
+                                                        <option>Pending</option>
+                                                    </select>
+
+                                                <i  @click="filtering" style="margin-left: 10px;cursor: pointer;"
+                                                    class="fa fa-filter" aria-hidden="true"></i>
+
+
                                             </div>
                                         </div>
                                     </div>
@@ -117,21 +150,7 @@ onUpdated(() => {
                         <rect x="26" y="108" rx="0" ry="0" width="387" height="10" />
 
                     </content-loader>
-                    <div v-else class="shop__product__option">
-                        <div class="row">
-
-                            <div class="col-lg-6 col-md-6 col-sm-6">
-                                <div class="shop__product__option__right">
-                                    <p>Filter: </p>
-                                    <select v-model="filter">
-                                        <option>DateEnd</option>
-                                        <option>Active</option>
-                                        <option>Pending</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    
                     <div class="row">
                         <ProductView :product="filteredProd"></ProductView>
 
