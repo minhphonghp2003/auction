@@ -13,17 +13,19 @@ let filter = ref('None')
 let loading = ref(true)
 let choseCate = ref('None')
 let page = ref(1)
+let list_page = ref()
 
 onMounted(async () => {
     try {
         loading.value = true
 
+        list_page.value = (await axios.get("https://ecommerce-r6l7.onrender.com/product/pagecount")).data
+        list_page.value = Math.ceil(list_page.value-1)
 
 
-        page.value = (await axios.get("https://ecommerce-r6l7.onrender.com/product/pagecount")).data
         
         category.value = (await axios.get('https://ecommerce-r6l7.onrender.com/product/category')).data
-        product.value = (await axios.get('https://ecommerce-r6l7.onrender.com/product/all')).data
+        product.value = (await axios.get(`https://ecommerce-r6l7.onrender.com/product/all`)).data
         product.value.forEach((element) => {
             element.image = Buffer.from(element.image).toString("base64");
             element.date_end = element.date_end.split("T")[0];
@@ -36,6 +38,27 @@ onMounted(async () => {
         console.log(error);
     }
 })
+
+
+let newPage =async (p)=>{
+     try {
+        page.value = p
+        loading.value = true
+
+        product.value = (await axios.get(`https://ecommerce-r6l7.onrender.com/product/all?page=${page.value}`)).data
+        product.value.forEach((element) => {
+            element.image = Buffer.from(element.image).toString("base64");
+            element.date_end = element.date_end.split("T")[0];
+        });
+
+        filteredProd.value = JSON.parse(JSON.stringify(product.value));
+
+        loading.value = false
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 
 let filtering = () => {
     let choiceProd = []
@@ -172,18 +195,15 @@ let filtering = () => {
 
                     </content-loader>
 
-                    <div class="row">
-                        <ProductView :product="filteredProd"></ProductView>
+                    <div v-if="!loading" class="row">
+                        <ProductView  :product="filteredProd"></ProductView>
 
                     </div>
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="product__pagination">
-                                <a class="active" href="#">1</a>
-                                <a href="#">2</a>
-                                <a href="#">3</a>
-                                <span>...</span>
-                                <a href="#">21</a>
+                                <a @click="newPage(p)" :class="{active:p==page}" v-for="p in list_page" :key="p" href="#">{{p}}</a>
+                                
                             </div>
                         </div>
                     </div>

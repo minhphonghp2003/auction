@@ -59,12 +59,12 @@ const b64toBlob = (b64Data, contentType = "", sliceSize = 512) => {
 
 let getRelated = async (cate) => {
   let prod = (await axios('https://ecommerce-r6l7.onrender.com/product/all')).data
-  for (let ele of prod.value) {
-   if(ele.category == cate){
-    related.value.push(ele)
-   } 
+  for (let ele of prod) {
+    if (ele.category == cate) {
+      related.value.push(ele)
+    }
   }
-  
+
   related.value = related.value.slice(0, 4)
   for (let i in related.value) {
 
@@ -179,23 +179,39 @@ let userView = (s_id) => {
 
 }
 
-let exitUser = () =>{
+let exitUser = () => {
   sellerView.value = false
 }
+
+let deleteProd = async () => {
+  try {
+    await axios.delete('https://ecommerce-r6l7.onrender.com/product/', { id: product.value.prod.product_id }, {
+      headers: {
+        token: token.value,
+      },
+    })
+  } catch (err) {
+    console.log(err);
+    error.value = "You can not delete this product."
+  }
+}
+
 
 </script>
 
 <template>
 
-<UserView @exit-user="exitUser" v-if="sellerView" :uid="seller_id"></UserVIew>
+  <UserView @exit-user="exitUser" v-if="sellerView" :uid="seller_id"></UserVIew>
 
   <section @click="sellerViewToggle" v-if="!loading" class="shop-details">
     <div class="product__details__pic">
       <div class="container">
         <div class="row" style="margin-top: 120px">
+          <p @click="deleteProd" style="color:red; cursor: pointer;">Delete Product</p>
           <div class="col-lg-3 col-md-3">
             <ul class="nav nav-tabs" role="tablist">
               <li @click="mainImg = i" v-for="i of product.prod.image" :key="i" class="nav-item">
+
                 <a class="nav-link active" data-toggle="tab" style="cursor: pointer" role="tab">
                   <img class="product__thumb__pic set-bg" :src="i" />
                 </a>
@@ -254,7 +270,8 @@ let exitUser = () =>{
               <div class="product__details__last__option">
                 <h5><span>More information</span></h5>
                 <ul>
-                  <li><span>Seller:</span><a @click="userView(product.prod.seller)" style="cursor: pointer">{{product.seller_name}}</a> </li>
+                  <li><span>Seller:</span><a @click="userView(product.prod.seller)"
+                      style="cursor: pointer">{{product.seller_name}}</a> </li>
                   <li><span>SKU:</span> {{product.prod.sku}}</li>
                   <li><span>Categories:</span> {{product.prod.cate}}</li>
                 </ul>
