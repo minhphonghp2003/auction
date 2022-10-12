@@ -59,9 +59,12 @@ const b64toBlob = (b64Data, contentType = "", sliceSize = 512) => {
 
 let getRelated = async (cate) => {
   let prod = (await axios('https://ecommerce-r6l7.onrender.com/product/all')).data
-  related.value = prod.filter(ele => {
-    return ele.category = cate
-  })
+  for (let ele of prod.value) {
+   if(ele.category == cate){
+    related.value.push(ele)
+   } 
+  }
+  
   related.value = related.value.slice(0, 4)
   for (let i in related.value) {
 

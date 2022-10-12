@@ -68,7 +68,6 @@ let add = async () => {
   for (let i = 0; i < images.value.files.length; i++) {
     formData.append("product_images", images.value.files[i]);
   }
-  console.log(formData.get('product_images'));
 
   try {
     uploading.value = true;

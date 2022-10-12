@@ -17,6 +17,11 @@ let page = ref(1)
 onMounted(async () => {
     try {
         loading.value = true
+
+
+
+        page.value = (await axios.get("https://ecommerce-r6l7.onrender.com/product/pagecount")).data
+        
         category.value = (await axios.get('https://ecommerce-r6l7.onrender.com/product/category')).data
         product.value = (await axios.get('https://ecommerce-r6l7.onrender.com/product/all')).data
         product.value.forEach((element) => {
@@ -32,13 +37,29 @@ onMounted(async () => {
     }
 })
 
-let filtering = ()=>{
-    // console.log(product.value);
-    if(choseCate.value !== "None"){
-
-         
-        console.log(product.value.filter(ele=>console.log(ele)));
+let filtering = () => {
+    let choiceProd = []
+    if (choseCate.value !== "None") {
+        for (const ele of product.value) {
+            if (ele.category == choseCate.value) {
+                choiceProd.push(ele)
+            }
+        }
+    } else {
+        choiceProd = JSON.parse(JSON.stringify(product.value));
     }
+    if (filter.value !== 'None') {
+        for (let ind=0; ind<choiceProd.length; ind++  ) {
+            if (filter.value !== "DateEnd" && choiceProd[ind].status !== filter.value) {
+                choiceProd.splice(ind, 1)
+                ind--
+            }
+            if (filter.value === "DateEnd") {
+                choiceProd.sort((a, b) => b.date_end.split('-').join('') - a.date_end.split('-').join(''))
+            }
+        }
+    } 
+    filteredProd.value = choiceProd
 }
 
 </script>
@@ -119,14 +140,14 @@ let filtering = ()=>{
                                                     <rect x="26" y="108" rx="0" ry="0" width="387" height="10" />
 
                                                 </content-loader>
-                                                    <select v-else v-model="filter">
-                                                        <option>None</option>
-                                                        <option>DateEnd</option>
-                                                        <option>Active</option>
-                                                        <option>Pending</option>
-                                                    </select>
+                                                <select v-else v-model="filter">
+                                                    <option>None</option>
+                                                    <option>DateEnd</option>
+                                                    <option>active</option>
+                                                    <option>pending</option>
+                                                </select>
 
-                                                <i  @click="filtering" style="margin-left: 10px;cursor: pointer;"
+                                                <i @click="filtering" style="margin-left: 10px;cursor: pointer;"
                                                     class="fa fa-filter" aria-hidden="true"></i>
 
 
@@ -150,7 +171,7 @@ let filtering = ()=>{
                         <rect x="26" y="108" rx="0" ry="0" width="387" height="10" />
 
                     </content-loader>
-                    
+
                     <div class="row">
                         <ProductView :product="filteredProd"></ProductView>
 
