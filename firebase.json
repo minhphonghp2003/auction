@@ -1,6 +1,8 @@
 {
   "hosting": {
     "public": "dist",
+    "site": "bidthuu",
+    
     "ignore": [
       "firebase.json",
       "**/.*",

@@ -25,7 +25,7 @@ onMounted(async () => {
 
         
         category.value = (await axios.get('https://ecommerce-r6l7.onrender.com/product/category')).data
-        product.value = (await axios.get(`https://ecommerce-r6l7.onrender.com/product/all`)).data
+        product.value = (await axios.get(`https://ecommerce-r6l7.onrender.com/product/all?page=${page.value}`)).data
         product.value.forEach((element) => {
             element.image = Buffer.from(element.image).toString("base64");
             element.date_end = element.date_end.split("T")[0];
