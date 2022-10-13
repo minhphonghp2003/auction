@@ -23,6 +23,7 @@ let section = ref('desc')
 let related = ref([])
 let pid = route.params.pid;
 let sellerView = ref(false)
+let deleting = ref(false)
 let isBidding = ref(false)
 let { cookies } = useCookies();
 let token = ref(cookies.get("token"));
@@ -185,13 +186,18 @@ let exitUser = () => {
 
 let deleteProd = async () => {
   try {
-    await axios.delete('https://ecommerce-r6l7.onrender.com/product/', { id: product.value.prod.product_id }, {
-      headers: {
+    deleting.value = true
+    await axios.delete('https://ecommerce-r6l7.onrender.com/product/', {
+      data:{
+        id:product.value.prod.product_id
+      },headers: {
         token: token.value,
       },
+      
     })
+    router.push({ name: "auction" })
   } catch (err) {
-    console.log(err);
+    deleting.value =false 
     error.value = "You can not delete this product."
   }
 }
@@ -207,8 +213,9 @@ let deleteProd = async () => {
     <div class="product__details__pic">
       <div class="container">
         <div class="row" style="margin-top: 120px">
-          <p @click="deleteProd" style="color:red; cursor: pointer;">Delete Product</p>
+          <p v-if="!deleting" @click="deleteProd" style="color:red; cursor: pointer;">Delete Product</p>
           <div class="col-lg-3 col-md-3">
+            <i v-if="deleting" class="fa fa-spinner fa-spin" ></i>
             <ul class="nav nav-tabs" role="tablist">
               <li @click="mainImg = i" v-for="i of product.prod.image" :key="i" class="nav-item">
 

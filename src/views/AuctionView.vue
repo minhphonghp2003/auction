@@ -50,9 +50,8 @@ let newPage =async (p)=>{
             element.image = Buffer.from(element.image).toString("base64");
             element.date_end = element.date_end.split("T")[0];
         });
-
         filteredProd.value = JSON.parse(JSON.stringify(product.value));
-
+        
         loading.value = false
     } catch (error) {
         console.log(error);
