@@ -13,6 +13,7 @@ const { cookies } = useCookies();
 let token = ref(cookies.get("token"));
 let fullname = ref("");
 let userFetching = ref(false)
+let cart = ref(0)
 
 let login = async () => {
   if (token.value) {
@@ -47,7 +48,19 @@ onMounted(async () => {
           },
         })
       ).data.user.fullname;
+      let order = (await axios.get('https://ecommerce-r6l7.onrender.com/order/myorder', {
+        headers: {
+          token: token.value,
+        },
+      })).data
+      let myBid = (await axios.get('https://ecommerce-r6l7.onrender.com/product/mybid', {
+        headers: {
+          token: token.value,
+        },
+      })).data
+      cart.value = order.length + myBid.length
       userFetching.value = false
+
 
     } catch (error) {
       userFetching.value = false
@@ -55,6 +68,9 @@ onMounted(async () => {
   }
 })
 
+let newcart = () => {
+console.log(cart);
+}
 
 </script>
 
@@ -101,7 +117,7 @@ onMounted(async () => {
           <div class="col-lg-6 col-md-5">
             <div class="header__top__right">
               <div :key="route.fullPath" class="header__top__links">
-                <a style="cursor:pointer; color:cyan" :key="route.fullPath"  v-if="!fullname && !userFetching"
+                <a style="cursor:pointer; color:cyan" :key="route.fullPath" v-if="!fullname && !userFetching"
                   @click="login">Sign in</a>
                 <router-link style="color:cyan" :key="fullname" v-if="fullname && !userFetching"
                   :to="{ name: 'profile' }">{{ fullname }}</router-link>
@@ -146,9 +162,9 @@ onMounted(async () => {
             <a href="#" @click="opensearch" class="search-switch"><img src="/src/assets/img/icon/search.png"
                 alt="" /></a>
             <a href="#"><img src="/src/assets/img/icon/heart.png" alt="" /></a>
-            <router-link :to="{ name: 'cart' }"><img src="/src/assets/img/icon/cart.png" alt="" /> <span>0</span>
+            <router-link @newcart="newcart" :to="{ name: 'cart' }"><img src="/src/assets/img/icon/cart.png" alt="" />
+              <span>{{cart}}</span>
             </router-link>
-            <div class="price">$0.00</div>
           </div>
         </div>
       </div>

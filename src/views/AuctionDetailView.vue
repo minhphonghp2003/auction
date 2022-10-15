@@ -27,6 +27,7 @@ let deleting = ref(false)
 let isBidding = ref(false)
 let { cookies } = useCookies();
 let token = ref(cookies.get("token"));
+const emit = defineEmits(['newcart'])
 const socket = io("https://ecommerce-r6l7.onrender.com");
 
 socket.on('setnewprice', (bid) => {
@@ -126,6 +127,7 @@ let bid = async () => {
     product.value.prod.price += user_bid.value;
     user_bid.value += min
     socket.emit('newbid', { user_bid: user_bid.value, price: product.value.prod.price })
+    emit('newcart')
     isBidding.value = false
 
   } catch (err) {
@@ -142,6 +144,7 @@ let bid = async () => {
         user_bid.value += min
         socket.emit('newbid', { user_bid: user_bid.value, price: product.value.prod.price })
 
+    emit('newcart')
         isBidding.value = false
       } catch (erro) {
         isBidding.value = false
