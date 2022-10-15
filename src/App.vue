@@ -16,6 +16,7 @@ let token = ref(cookies.get("token"));
 let fullname = ref("");
 let userFetching = ref(false)
 let cart = ref(0)
+let redtext = ref('')
 
 
 
@@ -75,6 +76,7 @@ onMounted(async () => {
 
 let newcart = () => {
   cart.value++
+  redtext.value = 'redtext'
 }
 
 </script>
@@ -168,7 +170,7 @@ let newcart = () => {
                 alt="" /></a>
             <a href="#"><img src="/src/assets/img/icon/heart.png" alt="" /></a>
             <router-link  :to="{ name: 'cart' }"><img src="/src/assets/img/icon/cart.png" alt="" />
-              <span>{{cart}}</span>
+              <span :class="[redtext]">{{cart}}</span>
             </router-link>
           </div>
         </div>
@@ -265,5 +267,7 @@ let newcart = () => {
 </template>
 
 <style scoped>
-
+.redtext {
+  color:red
+}
 </style>
