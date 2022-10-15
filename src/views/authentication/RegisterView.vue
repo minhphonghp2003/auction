@@ -86,7 +86,6 @@ let register = async () => {
         credential
       )
     ).data;
-    console.log(res.data);
     cookies.set("token", res.token);
     submit.value = true;
     router.push({ name: "home" }).then(() => router.go());
