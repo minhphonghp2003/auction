@@ -9,6 +9,7 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 const { cookies } = useCookies()
 let loginComp = ref(true)
+let emit = defineEmits(['renderLogin'])
 let swapComp = () => {
   router.push({ name: 'register' })
 }
@@ -46,7 +47,7 @@ let login = async () => {
     cookies.set('token', res.token)
     submit.value = true
     router.push({ name: 'home' })
-      .then(() => { router.go() })
+    .then(() => { router.go() })
   } catch (error) {
     submit.value = true
     nouser.value = true
