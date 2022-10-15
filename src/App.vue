@@ -1,11 +1,13 @@
 <script setup>
 import axios from "axios";
 import { onBeforeMount, onMounted, onUpdated, ref } from "vue";
+import { io } from 'socket.io-client'
 import { getCurrentInstance } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useCookies } from "vue3-cookies";
 import("../js/main.js");
 
+const socket = io("https://ecommerce-r6l7.onrender.com");
 let year = new Date().getFullYear();
 let route = useRoute()
 const router = useRouter();
@@ -14,6 +16,8 @@ let token = ref(cookies.get("token"));
 let fullname = ref("");
 let userFetching = ref(false)
 let cart = ref(0)
+
+
 
 let login = async () => {
   if (token.value) {
@@ -58,6 +62,7 @@ onMounted(async () => {
           token: token.value,
         },
       })).data
+
       cart.value = order.length + myBid.length
       userFetching.value = false
 
@@ -69,7 +74,7 @@ onMounted(async () => {
 })
 
 let newcart = () => {
-console.log(cart);
+  cart.value++
 }
 
 </script>
@@ -162,7 +167,7 @@ console.log(cart);
             <a href="#" @click="opensearch" class="search-switch"><img src="/src/assets/img/icon/search.png"
                 alt="" /></a>
             <a href="#"><img src="/src/assets/img/icon/heart.png" alt="" /></a>
-            <router-link @newcart="newcart" :to="{ name: 'cart' }"><img src="/src/assets/img/icon/cart.png" alt="" />
+            <router-link  :to="{ name: 'cart' }"><img src="/src/assets/img/icon/cart.png" alt="" />
               <span>{{cart}}</span>
             </router-link>
           </div>
@@ -172,7 +177,7 @@ console.log(cart);
     </div>
   </header>
   <!-- Header Section End -->
-  <router-view :key="$route.fullPath"></router-view>
+  <router-view @newcart="newcart" :key="$route.fullPath"></router-view>
   <!-- Search Begin -->
   <div ref="searchbox" class="search-model">
     <div class="h-100 d-flex align-items-center justify-content-center">
