@@ -168,9 +168,10 @@ let newcart = () => {
           <div class="header__nav__option">
             <a href="#" @click="opensearch" class="search-switch"><img src="/src/assets/img/icon/search.png"
                 alt="" /></a>
-            <a href="#"><img src="/src/assets/img/icon/heart.png" alt="" /></a>
-            <router-link  :to="{ name: 'cart' }"><img src="/src/assets/img/icon/cart.png" alt="" />
-              <span :class="[redtext]">{{cart}}</span>
+            <a v-if="token" href="#"><img src="/src/assets/img/icon/heart.png" alt="" /></a>
+
+            <router-link v-if="token"  :to="{ name: 'cart' }"><img src="/src/assets/img/icon/cart.png" alt="" />
+              <span @click="redtext = ''" :class="[redtext]">{{cart}}</span>
             </router-link>
           </div>
         </div>
