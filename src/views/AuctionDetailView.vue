@@ -10,6 +10,7 @@ import ChatRoomView from "../components/auctiondetail/ChatRoomView.vue";
 import BidderListView from "../components/auctiondetail/BidderListView.vue";
 import ProductView from "../components/ProductView.vue";
 import UserView from "../components/auctiondetail/UserView.vue";
+import WinnerView from "../components/auctiondetail/WinnerView.vue";
 let route = useRoute();
 let router = useRouter();
 let id = ref(route.params);
@@ -28,6 +29,8 @@ let isBidding = ref(false)
 let { cookies } = useCookies();
 let token = ref(cookies.get("token"));
 const emit = defineEmits(['newcart'])
+let gotWinner = ref(false)
+let winner = ref({})
 const socket = io("https://ecommerce-r6l7.onrender.com");
 // const socket = io("localhost:4000");
 
@@ -158,17 +161,20 @@ let bid = async () => {
 
 let countDown = (countDownDate) => {
 
-  setInterval(() => {
+  setInterval(async() => {
     var now = new Date().getTime();
     var distance = countDownDate - now;
-
+    
+    
     product.value.days = Math.floor(distance / (1000 * 60 * 60 * 24));
     product.value.hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60) + 9);
     product.value.minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
     product.value.seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
     if (distance < 0) {
+      
       clearInterval();
+      getWinner()
       return
     }
 
@@ -191,34 +197,39 @@ let deleteProd = async () => {
   try {
     deleting.value = true
     await axios.delete('https://ecommerce-r6l7.onrender.com/product/', {
-      data:{
-        id:product.value.prod.product_id
-      },headers: {
+      data: {
+        id: product.value.prod.product_id
+      }, headers: {
         token: token.value,
       },
-      
+
     })
     router.push({ name: "auction" })
   } catch (err) {
-    deleting.value =false 
+    deleting.value = false
     error.value = "You can not delete this product."
   }
 }
 
 
+let getWinner = async () => {
+  winner.value = (await axios.get(`https://ecommerce-r6l7.onrender.com/product/winner?id=${route.params.pid}`)).data
+  gotWinner.value = true
+}
+
 </script>
 
 <template>
 
-  <UserView @exit-user="exitUser" v-if="sellerView" :uid="seller_id"></UserVIew>
+  <UserView @exit-user="exitUser" v-if="sellerView" :uid="seller_id"></UserView>
 
-  <section @click="sellerViewToggle" v-if="!loading" class="shop-details">
+  <section @click="sellerViewToggle" v-if="!loading " class="shop-details">
     <div class="product__details__pic">
       <div class="container">
         <div class="row" style="margin-top: 120px">
           <p v-if="!deleting" @click="deleteProd" style="color:red; cursor: pointer;">Delete Product</p>
           <div class="col-lg-3 col-md-3">
-            <i v-if="deleting" class="fa fa-spinner fa-spin" ></i>
+            <i v-if="deleting" class="fa fa-spinner fa-spin"></i>
             <ul class="nav nav-tabs" role="tablist">
               <li @click="mainImg = i" v-for="i of product.prod.image" :key="i" class="nav-item">
 
@@ -253,12 +264,23 @@ let deleteProd = async () => {
                 <span> - {{ product.bidder_count }} Bidders</span>
               </div>
               <h3>{{ product.prod.price }}</h3>
-              <h4>Date end: </h4>{{product.prod.date_end}}
-              <h3>
-                {{product.days}} D : {{product.hours}} H : {{product.minutes}} M : {{product.seconds}} S
-              </h3>
-              <div class="product__details__cart__option">
-                <ul style="list-style-type: none;">
+              <div v-if="gotWinner">
+                <h2 style="color: blue">Winner: {{winner.fullname}} </h2>
+                <h3>Auction Closed</h3>
+
+              </div>
+              <br>
+              <div v-if="!gotWinner">
+                
+                <h4>Date end: </h4>{{product.prod.date_end}}
+                <h3>
+                  {{product.days}} D : {{product.hours}} H : {{product.minutes}} M : {{product.seconds}} S
+                </h3>
+              </div>
+              
+              <div v-if="!gotWinner" class="product__details__cart__option">
+                
+                <ul  style="list-style-type: none;">
                   <li>
                     <span>Min increase:</span> {{ product.prod.min_increase }}
                   </li>
@@ -272,9 +294,9 @@ let deleteProd = async () => {
                     <input type="number" :min="product.prod.min_increase + product.prod.price" v-model="user_bid" />
                   </div>
                 </div>
-                <a v-if="!isBidding" style="cursor: pointer; color: white" @click="bid" class="primary-btn">Bid</a>
+                <a v-if="!isBidding " style="cursor: pointer; color: white" @click="bid" class="primary-btn">Bid</a>
               </div>
-              <div class="product__details__btns__option">
+              <div v-if="!gotWinner" class="product__details__btns__option">
                 <a href="#"><i class="fa fa-heart"></i> add to wishlist</a>
               </div>
               <div class="product__details__last__option">

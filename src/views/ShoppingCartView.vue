@@ -12,6 +12,7 @@ let order = ref([])
 let bid = ref([])
 let { cookies } = useCookies();
 let token = ref(cookies.get("token"));
+let total = ref(0)
 
 
 onMounted(async () => {
@@ -31,6 +32,7 @@ onMounted(async () => {
     });
     order.value.forEach(element => {
         element.p_image = Buffer.from(element.p_image).toString("base64");
+        total.value += parseFloat(element.price) 
     });
     loading.value = false
 })
@@ -87,7 +89,7 @@ onMounted(async () => {
                                         </div>
                                     </td>
 
-                                    <td class="cart__price">{{o.status}}</td>
+                                    <td style="color:red" class="cart__price">{{o.status}}</td>
                                 </tr>
 
 
@@ -100,10 +102,18 @@ onMounted(async () => {
                                 <a @click="$router.push({name:'auction'})" href="#">Continue Bidding</a>
                             </div>
                         </div>
-                        
+
                     </div>
                 </div>
-
+                <div class="col-lg-4">
+                   
+                    <div class="cart__total">
+                        <h6>Cart total</h6>
+                        <ul>
+                            <li>Total <span>{{total}}</span></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
