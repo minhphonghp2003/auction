@@ -35,7 +35,7 @@ let goToProduct = (pid) => {
             <div class="product__item__text">
               <h6>{{ p.name }}</h6>
               <a
-                v-if="p.status == 'active'"
+                v-if="p.status == 'active' || p.status == 'sold'"
                 href="#"
                 @click="goToProduct(p.id)"
                 class="add-cart"
