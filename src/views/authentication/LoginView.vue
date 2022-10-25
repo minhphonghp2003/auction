@@ -61,7 +61,7 @@ let forgotpasswd = () => {
 
 let ggLogin = async () => {
   // http://localhost:4000/user/auth/google
-  window.location.href = "http://localhost:4000/user/auth/google"  
+  window.location.href = "https://ecommerce-r6l7.onrender.com/user/auth/google"  
 }
 
 </script>
