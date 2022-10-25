@@ -47,7 +47,7 @@ let login = async () => {
     cookies.set('token', res.token)
     submit.value = true
     router.push({ name: 'home' })
-    .then(() => { router.go() })
+      .then(() => { router.go() })
   } catch (error) {
     submit.value = true
     nouser.value = true
@@ -57,6 +57,11 @@ let login = async () => {
 
 let forgotpasswd = () => {
   router.push({ name: 'forgotpasswd' })
+}
+
+let ggLogin = async () => {
+  // http://localhost:4000/user/auth/google
+  window.location.href = "http://localhost:4000/user/auth/google"  
 }
 
 </script>
@@ -93,19 +98,13 @@ let forgotpasswd = () => {
 
 
         <div class="txt1 text-center p-t-54 p-b-20">
-          <span> Or Login Up Using </span>
+          <span> Or Login Using </span>
         </div>
 
         <div class="flex-c-m">
-          <a href="#" class="login100-social-item bg1">
-            <i class="fa fa-facebook"></i>
-          </a>
 
-          <a href="#" class="login100-social-item bg2">
-            <i class="fa fa-twitter"></i>
-          </a>
 
-          <a href="#" class="login100-social-item bg3">
+          <a @click="ggLogin" href="#" class="login100-social-item bg3">
             <i class="fa fa-google"></i>
           </a>
         </div>

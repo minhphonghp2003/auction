@@ -13,6 +13,7 @@ let route = useRoute()
 const router = useRouter();
 const { cookies } = useCookies();
 let token = ref(cookies.get("token"));
+let cid = ref(cookies.get("connect.sid"));
 let fullname = ref("");
 let userFetching = ref(false)
 let cart = ref(0)
@@ -43,6 +44,9 @@ let login = async () => {
 };
 
 onMounted(async () => {
+  if(cid.value){
+    console.log(cid);
+  }
   if (token.value) {
     userFetching.value = true
     try {
