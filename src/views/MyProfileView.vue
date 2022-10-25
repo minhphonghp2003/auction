@@ -279,7 +279,8 @@ let toggleAddP = ()=>{
           </ul>
         </div>
       </div>
-      <div class="profile-info col-md-9">
+      <AddProduct @toggleAddP="toggleAddP" v-if="active == 'addproduct'" ></AddProduct>
+      <div v-if="active != 'addproduct'" class="profile-info col-md-9">
         <div class="panel"></div>
         <div class="panel">
           <div class="panel-body bio-graph-info">
@@ -414,7 +415,6 @@ let toggleAddP = ()=>{
       </div>
     </div>
   </div>
-<AddProduct @toggleAddP="toggleAddP" v-if="active == 'addproduct'" ></AddProduct>
 </template>
 <style scoped>
 @import "../assets/css/bootstrap.min.css";

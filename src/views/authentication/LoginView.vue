@@ -59,10 +59,7 @@ let forgotpasswd = () => {
   router.push({ name: 'forgotpasswd' })
 }
 
-let ggLogin = async () => {
-  // http://localhost:4000/user/auth/google
-  window.location.href = "https://ecommerce-r6l7.onrender.com/user/auth/google"  
-}
+
 
 </script>
 
@@ -80,7 +77,7 @@ let ggLogin = async () => {
         <p v-if="!isUsername" style="color:red">Username is require</p>
         <div class="wrap-input100 validate-input">
           <span class="label-input100">Password</span>
-          <input class="input100" type="password" name="password" placeholder="Type your password" v-model="password" />
+          <input @keyup.enter="login" class="input100" type="password" name="password" placeholder="Type your password" v-model="password" />
           <span class="focus-input100" data-symbol="&#xf190;"></span>
         </div>
 
@@ -97,17 +94,8 @@ let ggLogin = async () => {
         </div>
 
 
-        <div class="txt1 text-center p-t-54 p-b-20">
-          <span> Or Login Using </span>
-        </div>
 
-        <div class="flex-c-m">
-
-
-          <a @click="ggLogin" href="#" class="login100-social-item bg3">
-            <i class="fa fa-google"></i>
-          </a>
-        </div>
+       
 
         <div class="flex-col-c p-t-155">
 

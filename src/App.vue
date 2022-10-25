@@ -13,7 +13,6 @@ let route = useRoute()
 const router = useRouter();
 const { cookies } = useCookies();
 let token = ref(cookies.get("token"));
-let cid = ref(cookies.get("connect.sid"));
 let fullname = ref("");
 let userFetching = ref(false)
 let cart = ref(0)
@@ -44,9 +43,7 @@ let login = async () => {
 };
 
 onMounted(async () => {
-  if(cid.value){
-    console.log(cid);
-  }
+  
   if (token.value) {
     userFetching.value = true
     try {
@@ -92,15 +89,8 @@ let newcart = () => {
     <div class="offcanvas__option">
       <div class="offcanvas__links">
         <a href="#">Sign in</a>
-        <a href="#">FAQs</a>
       </div>
-      <div class="offcanvas__top__hover">
-        <span>Usd <i class="arrow_carrot-down"></i></span>
-        <ul>
-          <li>USD</li>
-          <li>VND</li>
-        </ul>
-      </div>
+      
     </div>
     <div class="offcanvas__nav__option">
       <a href="#" class="search-switch"><img src="/src/assets/img/icon/search.png" alt="" /></a>
@@ -122,7 +112,7 @@ let newcart = () => {
         <div class="row">
           <div class="col-lg-6 col-md-7">
             <div class="header__top__left">
-              <p>Trusted bidding system, specially drug.</p>
+              <p>Welcome to bidthu, an online auction website.</p>
             </div>
           </div>
           <div class="col-lg-6 col-md-5">
@@ -132,15 +122,14 @@ let newcart = () => {
                   @click="login">Sign in</a>
                 <router-link style="color:cyan" :key="fullname" v-if="fullname && !userFetching"
                   :to="{ name: 'profile' }">{{ fullname }}</router-link>
-                <router-link :to="{ name: 'faq' }">FAQ</router-link>
               </div>
-              <div class="header__top__hover">
+              <!-- <div class="header__top__hover">
                 <span>Usd </span>
                 <ul>
                   <li>USD</li>
                   <li>VND</li>
                 </ul>
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
@@ -170,8 +159,7 @@ let newcart = () => {
         </div>
         <div class="col-lg-3 col-md-3">
           <div class="header__nav__option">
-            <a href="#" @click="opensearch" class="search-switch"><img src="/src/assets/img/icon/search.png"
-                alt="" /></a>
+           
             <a v-if="token" href="#"><img src="/src/assets/img/icon/heart.png" alt="" /></a>
 
             <router-link v-if="token"  :to="{ name: 'cart' }"><img src="/src/assets/img/icon/cart.png" alt="" />
@@ -205,31 +193,30 @@ let newcart = () => {
               <a href="#"><img src="/src/assets/img/icon/Bidthu.png" alt="" /></a>
             </div>
             <p>
-              The customer is at the heart of our unique business model, which
-              includes design.
+            Enjoy selling and bidding
             </p>
 
           </div>
         </div>
         <div class="col-lg-2 offset-lg-1 col-md-3 col-sm-6">
           <div class="footer__widget">
-            <h6>Shopping</h6>
+            <h6>Selling</h6>
             <ul>
-              <li><a href="#">Clothing Store</a></li>
-              <li><a href="#">Trending Shoes</a></li>
-              <li><a href="#">Accessories</a></li>
-              <li><a href="#">Sale</a></li>
+              <li><a href="#">placeholder</a></li>
+              <li><a href="#">placeholder</a></li>
+              <li><a href="#">placeholder</a></li>
+              <li><a href="#">placeholder</a></li>
             </ul>
           </div>
         </div>
         <div class="col-lg-2 col-md-3 col-sm-6">
           <div class="footer__widget">
-            <h6>Shopping</h6>
+            <h6>Buying</h6>
             <ul>
-              <li><a href="#">Contact Us</a></li>
-              <li><a href="#">Payment Methods</a></li>
-              <li><a href="#">Delivary</a></li>
-              <li><a href="#">Return & Exchanges</a></li>
+              <li><a href="#">placeholder</a></li>
+              <li><a href="#">placeholder</a></li>
+              <li><a href="#">placeholder</a></li>
+              <li><a href="#">placeholder</a></li>
             </ul>
           </div>
         </div>

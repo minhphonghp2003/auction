@@ -4,7 +4,6 @@ import AuctionView from '../views/AuctionView.vue'
 import AuctionDetailView from '../views/AuctionDetailView.vue'
 import ContactView from '../views/ContactView.vue'
 import ShoppingCartView from '../views/ShoppingCartView.vue'
-import FaqView from '../views/FaqView.vue'
 import LoginView from '../views/authentication/LoginView.vue'
 import RegisterView from '../views/authentication/RegisterView.vue'
 import ChangePassword from '../views/authentication/ChangePassword.vue'
@@ -73,11 +72,7 @@ const router = createRouter({
       component: ShoppingCartView
     },
     
-    {
-      path: '/faq',
-      name: 'faq',
-      component: FaqView
-    },
+    
 
   ]
 })

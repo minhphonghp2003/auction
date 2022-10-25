@@ -93,7 +93,7 @@ let add = async () => {
   <div
     style="margin-top: 160px; max-width: 100%"
     @click="toggleView"
-    class="container tm-mt-big tm-mb-big backdrop"
+    class="container tm-mt-big tm-mb-big "
   >
     <div class="row">
       <div class="col-xl-9 col-lg-10 col-md-12 col-sm-12 mx-auto">
