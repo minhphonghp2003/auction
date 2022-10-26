@@ -29,7 +29,7 @@ let send = async () => {
     { email: email.value }
   )).data;
   let message =
-    `We are from Bidthu? and we received a password-reset request from your email. Please follow this link to reset your password\nhttp://localhost:5173/resetpassword/${e_id}`;
+    `We are from Bidthu? and we received a password-reset request from your email. Please follow this link to reset your password\nhttps://bidthuu.firebaseapp.com//resetpassword/${e_id}`;
   let emailTemplate = {
     from_name: "Minh",
     to_name: "User",
