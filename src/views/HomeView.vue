@@ -78,8 +78,8 @@ let countDown = (countDownDate) => {
     var now = new Date().getTime();
     var distance = countDownDate - now;
 
-    mostWatched.value.days = Math.floor(distance / (1000 * 60 * 60 * 24));
-    mostWatched.value.hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60) + 9);
+    mostWatched.value.days = Math.floor(distance / (1000 * 60 * 60 * 24)) +1
+    mostWatched.value.hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60) )+9
     mostWatched.value.minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
     mostWatched.value.seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
