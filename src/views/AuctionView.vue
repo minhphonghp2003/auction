@@ -35,7 +35,6 @@ onMounted(async () => {
 
         loading.value = false
     } catch (error) {
-        console.log(error);
     }
 })
 
@@ -54,7 +53,6 @@ let newPage =async (p)=>{
         
         loading.value = false
     } catch (error) {
-        console.log(error);
     }
 }
 
