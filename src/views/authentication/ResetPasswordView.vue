@@ -36,7 +36,7 @@ let reset = async () => {
     })
     await axios.delete("https://ecommerce-r6l7.onrender.com/user/email",{ params: { id:route.params.e_id } })
     router.push({name:'login'})
-  } catch (error) {
+  } catch (err) {
     submit.value = true
    error.value = "Sorry, we can't handle this right now! Please try another time"
   }
