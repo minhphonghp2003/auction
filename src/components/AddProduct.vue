@@ -106,7 +106,7 @@ let add = async () => {
             <div class="col-xl-6 col-lg-6 col-md-12">
               <p v-if="error" style="color: yellow">{{ error }}</p>
               <div class="form-group mb-3">
-                <label for="name">Sku </label>
+                <label for="name">SKU </label>
                 <input
                   type="text"
                   v-model="product.sku"
