@@ -166,8 +166,8 @@ let countDown = (countDownDate) => {
     var distance = countDownDate - now;
     
     
-    product.value.days = Math.floor(distance / (1000 * 60 * 60 * 24));
-    product.value.hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60) + 9);
+    product.value.days = Math.floor(distance / (1000 * 60 * 60 * 24)) +1
+    product.value.hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60) )+9
     product.value.minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
     product.value.seconds = Math.floor((distance % (1000 * 60)) / 1000);
 

@@ -200,7 +200,7 @@ let filtering = () => {
                     </div>
                     <div class="row">
                         <div class="col-lg-12">
-                            <div class="product__pagination">
+                            <div v-if="loading != true" class="product__pagination">
                                 <a @click="newPage(p)" :class="{active:p==page}" v-for="p in list_page" :key="p" href="#">{{p}}</a>
                                 
                             </div>
