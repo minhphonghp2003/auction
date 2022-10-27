@@ -213,8 +213,13 @@ let deleteProd = async () => {
 
 
 let getWinner = async () => {
-  winner.value = (await axios.get(`https://ecommerce-r6l7.onrender.com/product/winner?id=${route.params.pid}`)).data
-  gotWinner.value = true
+  try {
+    winner.value = (await axios.get(`https://ecommerce-r6l7.onrender.com/product/winner?id=${route.params.pid}`)).data
+    gotWinner.value = true
+    
+  } catch (err) {
+    
+  }
 }
 
 </script>
